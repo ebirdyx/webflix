@@ -1,0 +1,16 @@
+version: '3.3'
+
+services:
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_DATABASE: webflix
+      MYSQL_ROOT_PASSWORD: rWfZmagGgFbdus4E0PsJREfC
+    ports:
+    - '3306:3306'
+    volumes:
+    - mariadb-data:/var/lib/mysql
+
+volumes:
+  mariadb-data:
