@@ -57,15 +57,11 @@ create table Movie
 
 create table PersonRolePlayed
 (
-    person_id    int,
-    role_id      int,
-    movie_id     int,
-    character_id int,
-    primary key (role_id, movie_id, person_id),
-    foreign key (person_id) references People (id),
-    foreign key (movie_id) references Movie (id),
-    foreign key (role_id) references Roles (id),
-    foreign key (character_id) references Characters (id)
+    person_id    int references People (id),
+    role_id      int references Roles (id),
+    movie_id     int references Movie (id),
+    character_id int references Characters (id),
+    primary key (role_id, movie_id, person_id)
 );
 
 create table Genre

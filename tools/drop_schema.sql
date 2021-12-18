@@ -14,6 +14,8 @@ drop table if exists CustomerSubscription;
 
 drop table if exists MovieDVD;
 
+drop table if exists Trailer;
+
 drop table if exists SubscriptionPayment;
 
 drop table if exists Employee;
