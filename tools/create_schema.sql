@@ -31,16 +31,10 @@ create table People
     birth_country varchar(100)
 );
 
-create table Roles
+create table MovieLanguages
 (
     id   int primary key auto_increment NOT NULL,
-    name varchar(100)
-);
-
-create table Characters
-(
-    id   int primary key auto_increment NOT NULL,
-    name varchar(100)
+    name varchar(50)
 );
 
 create table Movie
@@ -51,16 +45,37 @@ create table Movie
     language        varchar(100),
     duration        int,
     synopsis        text,
-    cover           blob
+    cover           text,
+    language_id     int references MovieLanguages(id),
+    director_id     int references People(id)
+);
+
+create table Scriptwriter
+(
+    id   int primary key auto_increment NOT NULL,
+    name varchar(100),
+    movie_id int references Movie(id)
 );
 
 create table PersonRolePlayed
 (
     person_id    int references People (id),
-    role_id      int references Roles (id),
     movie_id     int references Movie (id),
-    character_id int references Characters (id),
-    primary key (role_id, movie_id, person_id)
+    character_name varchar(100),
+    primary key (movie_id, person_id)
+);
+
+create table ProductionCountry
+(
+    id   int primary key auto_increment NOT NULL,
+    name varchar(100)
+);
+
+create table MovieProductionCountry
+(
+    country_id int references ProductionCountry (id),
+    movie_id   int references Movie (id),
+    primary key (movie_id, country_id)
 );
 
 create table Genre
