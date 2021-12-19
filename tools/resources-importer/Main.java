@@ -1,11 +1,14 @@
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import models.XMLPeople;
-import models.XMLPerson;
+import models.movies.XMLMovies;
+import models.people.XMLPeople;
+import models.people.XMLPerson;
 
 import java.io.*;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.sql.*;
+import java.util.HashSet;
+import java.util.Set;
 
 class Main {
     private static Connection conn = null;
@@ -26,12 +29,12 @@ class Main {
     }
 
     // XML -> Object
-    private static Object deserializeObjectFromXML(String content) {
+    private static Object deserializeObjectFromXML(String content, Class type) {
         XmlMapper xmlMapper = new XmlMapper();
         Object obj = null;
         try {
             xmlMapper.setDefaultUseWrapper(false);
-            obj = xmlMapper.readValue(content, XMLPeople.class);
+            obj = xmlMapper.readValue(content, type);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -43,7 +46,7 @@ class Main {
         try {
             if (conn == null)
                 conn = DriverManager.getConnection("jdbc:mysql://localhost/webflix?" +
-                    "user=root&password=rWfZmagGgFbdus4E0PsJREfC");
+                        "user=root&password=rWfZmagGgFbdus4E0PsJREfC");
 
             Statement stmt = conn.createStatement(); //way to send queries to db
             ResultSet rs = stmt.executeQuery(query);  // response from db
@@ -63,20 +66,41 @@ class Main {
         }
     }
 
-    public static void main(String[] args) {
+    public static void loadPeople() {
         String xml = readXMLFileFromResources("people_latin1.xml");
-        XMLPeople people = (XMLPeople) deserializeObjectFromXML(xml);
+        XMLPeople people = (XMLPeople) deserializeObjectFromXML(xml, XMLPeople.class);
 
-        for (XMLPerson person: people.people) {
-            String query = "insert into People (id, name, dob, bio, photo, birth_city, birth_state, birth_country) "+
-                    "values(" + person.id +", " + person.getName() +", " + person.getBirth().getSQLDob() +
-                    ", " + person.getEscapedBio() +", " + person.getPhoto() +", " + person.getBirth().getCityOfBirth() +", " +
+        for (XMLPerson person : people.people) {
+            String query = "insert into People (id, name, dob, bio, photo, birth_city, birth_state, birth_country) " +
+                    "values(" + person.id + ", " + person.getName() + ", " + person.getBirth().getSQLDob() +
+                    ", " + person.getEscapedBio() + ", " + person.getPhoto() + ", " + person.getBirth().getCityOfBirth() + ", " +
                     person.getBirth().getStateOfBirth() + ", " + person.getBirth().getCountryOfBirth() + ");";
 
             System.out.println(query);
 
             runQueryOnDatabase(query);
         }
+    }
+
+    public static void loadMovies() {
+        String xml = readXMLFileFromResources("movies_latin1.xml");
+        XMLMovies movies = (XMLMovies) deserializeObjectFromXML(xml, XMLMovies.class);
+
+        Set<String> genres = new HashSet<>();
+
+        movies.movies.stream()
+                .forEach(xmlMovie -> xmlMovie.genres.stream()
+                        .forEach(genre -> genres.add(genre)));
+
+        genres.stream().forEach(genre -> {
+            String query = "insert into Genre(name) values('" + genre + "');";
+            runQueryOnDatabase(query);
+        });
+    }
+
+    public static void main(String[] args) {
+        loadPeople();
+        loadMovies();
 
         try {
             conn.close();
