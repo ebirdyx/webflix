@@ -22,14 +22,13 @@ create table User
 create table People
 (
     id            int primary key auto_increment not null,
-    f_name        varchar(100),
-    l_name        varchar(100),
-    dob           int,
+    name          varchar(255),
+    dob           date,
     bio           text,
-    photo         mediumblob,
+    photo         text,
     birth_city    varchar(100),
-    birth_country varchar(100),
-    birth_state   varchar(100)
+    birth_state   varchar(100),
+    birth_country varchar(100)
 );
 
 create table Roles
