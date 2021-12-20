@@ -26,11 +26,15 @@ drop table if exists Rentals;
 
 drop table if exists People;
 
-drop table if exists Roles;
-
-drop table if exists Characters;
-
 drop table if exists Genre;
+
+drop table if exists MovieLanguages;
+
+drop table if exists MovieProductionCountry;
+
+drop table if exists ProductionCountry;
+
+drop table if exists Scriptwriter;
 
 drop table if exists Movie;
 

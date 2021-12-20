@@ -42,7 +42,6 @@ create table Movie
     id              int primary key auto_increment NOT NULL,
     title           varchar(100),
     publishing_year int,
-    language        varchar(100),
     duration        int,
     synopsis        text,
     cover           text,
