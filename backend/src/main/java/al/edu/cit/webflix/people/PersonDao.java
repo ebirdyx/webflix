@@ -27,12 +27,18 @@ public class PersonDao implements IRepository<Person> {
 
     @Override
     public void add(Person newItem) {
+        String dob = null;
+        if (newItem.getDob() != null)
+            dob = "STR_TO_DATE(" +
+                    surroundWithSingleQuotes(dateToString(newItem.getDob())) +
+                    ", '%Y-%m-%d')";
+
         String query = String.format(
                 "insert into People (id, name, dob, bio, photo, birth_city, birth_state, birth_country) " +
                 "values(%d, %s, %s, %s, %s, %s, %s, %s);",
                 newItem.getId(),
                 surroundWithSingleQuotes(newItem.getName()),
-                "STR_TO_DATE(" + surroundWithSingleQuotes(dateToString(newItem.getDob())) + ", '%Y-%m-%d')",
+                dob,
                 surroundWithSingleQuotes(newItem.getBio()),
                 surroundWithSingleQuotes(newItem.getPhoto()),
                 surroundWithSingleQuotes(newItem.getBirthCity()),

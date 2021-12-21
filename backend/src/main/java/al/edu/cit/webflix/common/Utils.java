@@ -21,11 +21,12 @@ public class Utils {
     }
 
     public static String dateToString(Date d) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return dateFormat.format(d);
     }
 
     public static String surroundWithSingleQuotes(String s) {
+        if (s == null) return null;
         return "'" + escapeSingleQuotes(s) + "'";
     }
 
