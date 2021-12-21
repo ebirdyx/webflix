@@ -7,8 +7,6 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import java.util.ArrayList;
 import java.util.List;
 
-import static al.edu.cit.webflix.common.Utils.surroundWithSingleQuotes;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class XMLMovie {
     @JacksonXmlProperty(isAttribute = true)
@@ -33,7 +31,7 @@ public class XMLMovie {
     @JsonProperty("scriptwriter")
     public List<String> scriptwriters = new ArrayList<>();
 
-    public XMLDirector director;
+    public XMLDirector director = new XMLDirector();
 
     @JsonProperty("role")
     public List<XMLRole> roles = new ArrayList<>();
@@ -42,24 +40,4 @@ public class XMLMovie {
 
     @JsonProperty("trailer")
     public List<String> trailers = new ArrayList<>();
-
-
-    public String getTitle() {
-        return surroundWithSingleQuotes(title);
-    }
-
-    public String getEscapedSynopsy() {
-        if (synopsy == null) return null;
-        return surroundWithSingleQuotes(synopsy);
-    }
-
-    public XMLDirector getDirector() {
-        if (director == null) return new XMLDirector();
-        return director;
-    }
-
-    public String getEscapedCover() {
-        if (cover == null) return null;
-        return surroundWithSingleQuotes(cover);
-    }
 }

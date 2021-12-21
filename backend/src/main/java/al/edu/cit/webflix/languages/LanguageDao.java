@@ -23,6 +23,7 @@ public class LanguageDao implements IRepository<Language> {
     private static final String UPDATE_QUERY =
             "update MovieLanguages set name = ? where id = ?;";
     private static final String DELETE_QUERY = "delete from MovieLanguages where id = ?;";
+    private static final String FIND_BY_NAME = "select * from MovieLanguages where name = ?";
 
     @Override
     public int count() {
@@ -39,6 +40,10 @@ public class LanguageDao implements IRepository<Language> {
     @Override
     public Language get(int id) {
         return jdbc.queryForObject(GET_BY_ID_QUERY, Language.class, id);
+    }
+
+    public Language findByName(String name) {
+        return jdbc.queryForObject(FIND_BY_NAME, Language.class, name);
     }
 
     @Override

@@ -11,6 +11,8 @@ import al.edu.cit.webflix.languages.LanguageBuilder;
 import al.edu.cit.webflix.languages.LanguageDao;
 import al.edu.cit.webflix.loader.models.movies.XMLMovies;
 import al.edu.cit.webflix.loader.models.people.XMLPeople;
+import al.edu.cit.webflix.movies.Movie;
+import al.edu.cit.webflix.movies.MovieBuilder;
 import al.edu.cit.webflix.movies.MovieDao;
 import al.edu.cit.webflix.people.Person;
 import al.edu.cit.webflix.people.PersonBuilder;
@@ -98,31 +100,44 @@ class DatabaseLoader implements CommandLineRunner {
         languageDao.batchInsert(languages);
     }
 
+    public void loadScriptWriters() {
+
+    }
+
+    public void loadTrailers() {
+
+    }
+
+    public void loadRoles() {
+
+    }
+
     public void loadMovies() throws IOException {
         String xml = readFileFromResources("data/movies_latin1.xml");
-        XMLMovies movies = (XMLMovies) deserializeXmlObject(xml, XMLMovies.class);
+        XMLMovies xmlMovies = (XMLMovies) deserializeXmlObject(xml, XMLMovies.class);
 
         if (genreDao.count() == 0)
-            loadGenres(movies);
+            loadGenres(xmlMovies);
 
         if (countryDao.count() == 0)
-            loadCountries(movies);
+            loadCountries(xmlMovies);
 
         if (languageDao.count() == 0)
-            loadLanguages(movies);
+            loadLanguages(xmlMovies);
 
-//        movies.movies.stream().forEach(xmlMovie -> {
-//            int languageIndex = 0;
-//            for (String language : languages) {
-//                languageIndex++;
-//                if (language.equals(xmlMovie.language)) break;
-//            }
-//
-//            String movieQuery = "insert into Movie(id, title, publishing_year, duration, synopsis,  cover, language_id, director_id)"
-//                    + "values(" + xmlMovie.id + ", " + xmlMovie.getTitle() + ", " + xmlMovie.year + ", " + xmlMovie.duration + ", "
-//                    + xmlMovie.getEscapedSynopsy() + ", " + xmlMovie.getEscapedCover() + ", " + languageIndex + ", " +
-//                    xmlMovie.getDirector().id + "');";
-//        });
+        List<Movie> movies = xmlMovies.movies.stream()
+                .map(xmlMovie -> new MovieBuilder()
+                        .setId(xmlMovie.id)
+                        .setTitle(xmlMovie.title)
+                        .setPublishingYear(xmlMovie.year)
+                        .setSynopsis(xmlMovie.synopsy)
+                        .setCover(xmlMovie.cover)
+                        .setDirectorId(xmlMovie.director.id)
+                        .setLanguageId(languageDao.findByName(xmlMovie.language).getId())
+                        .build())
+                .collect(Collectors.toList());
+
+        movieDao.batchInsert(movies);
     }
 
     @Override

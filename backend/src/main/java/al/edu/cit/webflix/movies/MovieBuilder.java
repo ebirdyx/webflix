@@ -23,8 +23,8 @@ public class MovieBuilder {
         return this;
     }
 
-    public MovieBuilder setSynopsys(String synopsys) {
-        movie.setSynopsys(synopsys);
+    public MovieBuilder setSynopsis(String synopsys) {
+        movie.setSynopsis(synopsys);
         return this;
     }
 

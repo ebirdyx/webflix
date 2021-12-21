@@ -82,6 +82,7 @@ public class PersonDao implements IRepository<Person> {
             ps.setString(8, person.getBirthCountry());
         };
     }
+
     @Transactional
     @Override
     public void batchInsert(List<Person> items) {

@@ -12,7 +12,7 @@ public class Movie {
 
     private int duration;
 
-    private String synopsys;
+    private String synopsis;
 
     private String cover;
 
