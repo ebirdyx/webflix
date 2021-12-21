@@ -32,29 +32,24 @@ class DatabaseLoader implements CommandLineRunner {
     private CountryDao countryDao;
 
     public void loadPeople() {
-        String xml = null;
         try {
-            xml = readFileFromResources("data/people_latin1.xml");
+            String xml = readFileFromResources("data/people_latin1.xml");
+            XMLPeople people = (XMLPeople) deserializeXmlObject(xml, XMLPeople.class);
+            for (XMLPerson person : people.people) {
+                Person p = new Person(
+                        person.id,
+                        person.name,
+                        person.birth.getDob(),
+                        person.bio,
+                        person.photo,
+                        person.birth.getCityOfBirth(),
+                        person.birth.getStateOfBirth(),
+                        person.birth.getCountryOfBirth());
+
+                personDao.add(p);
+            }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-
-        XMLPeople people = null;
-        try {
-            people = (XMLPeople) deserializeXmlObject(xml, XMLPeople.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        for (XMLPerson person : people.people) {
-            String query = "insert into People (id, name, dob, bio, photo, birth_city, birth_state, birth_country) " +
-                    "values(" + person.id + ", " + person.getName() + ", " + person.getBirth().getSQLDob() +
-                    ", " + person.getEscapedBio() + ", " + person.getPhoto() + ", " + person.getBirth().getCityOfBirth() + ", " +
-                    person.getBirth().getStateOfBirth() + ", " + person.getBirth().getCountryOfBirth() + ");";
-
-            System.out.println(query);
-
-            personDao.add(new Person());
         }
     }
 
@@ -117,7 +112,7 @@ class DatabaseLoader implements CommandLineRunner {
 
             String movieQuery = "insert into Movie(id, title, publishing_year, duration, synopsis,  cover, language_id, director_id)"
                     + "values(" + xmlMovie.id + ", " + xmlMovie.getTitle() + ", " + xmlMovie.year + ", " + xmlMovie.duration + ", "
-                    + xmlMovie.getEscapedSynopsy() + ", " + xmlMovie.getEscapedCover() + ", " + languageIndex +", " +
+                    + xmlMovie.getEscapedSynopsy() + ", " + xmlMovie.getEscapedCover() + ", " + languageIndex + ", " +
                     xmlMovie.getDirector().id + "');";
         });
     }

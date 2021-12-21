@@ -5,9 +5,26 @@ import org.springframework.core.io.ClassPathResource;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 public class Utils {
+    public static Date stringToDate(String year, String month, String day) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, Integer.parseInt(year));
+        cal.set(Calendar.MONTH, Integer.parseInt(month));
+        cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(day));
+        return cal.getTime();
+    }
+
+    public static String dateToString(Date d) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+        return dateFormat.format(d);
+    }
+
     public static String surroundWithSingleQuotes(String s) {
         return "'" + escapeSingleQuotes(s) + "'";
     }
