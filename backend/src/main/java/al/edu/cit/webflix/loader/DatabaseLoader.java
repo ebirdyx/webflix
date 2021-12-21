@@ -8,8 +8,8 @@ import al.edu.cit.webflix.languages.Language;
 import al.edu.cit.webflix.languages.LanguageDao;
 import al.edu.cit.webflix.loader.models.movies.XMLMovies;
 import al.edu.cit.webflix.loader.models.people.XMLPeople;
-import al.edu.cit.webflix.loader.models.people.XMLPerson;
 import al.edu.cit.webflix.people.Person;
+import al.edu.cit.webflix.people.PersonBuilder;
 import al.edu.cit.webflix.people.PersonDao;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -35,19 +35,20 @@ class DatabaseLoader implements CommandLineRunner {
         try {
             String xml = readFileFromResources("data/people_latin1.xml");
             XMLPeople people = (XMLPeople) deserializeXmlObject(xml, XMLPeople.class);
-            for (XMLPerson person : people.people) {
-                Person p = new Person(
-                        person.id,
-                        person.name,
-                        person.birth.getDob(),
-                        person.bio,
-                        person.photo,
-                        person.birth.getCityOfBirth(),
-                        person.birth.getStateOfBirth(),
-                        person.birth.getCountryOfBirth());
+            people.people.forEach(person -> {
+                Person p = new PersonBuilder()
+                        .setId(person.id)
+                        .setName(person.name)
+                        .setDob(person.birth.getDob())
+                        .setBio(person.bio)
+                        .setPhoto(person.photo)
+                        .setBirthCity(person.birth.getCityOfBirth())
+                        .setBirthState(person.birth.getStateOfBirth())
+                        .setBirthCountry(person.birth.getCountryOfBirth())
+                        .build();
 
                 personDao.add(p);
-            }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
