@@ -9,7 +9,6 @@ import java.util.List;
 @Repository
 @AllArgsConstructor
 public class PersonDao implements IRepository<Person> {
-
     @Override
     public List<Person> getAll() {
         return null;
@@ -21,12 +20,12 @@ public class PersonDao implements IRepository<Person> {
     }
 
     @Override
-    public void add(Person item) {
+    public void add(Person newItem) {
 
     }
 
     @Override
-    public void update(Person person) {
+    public void update(Person updatedItem) {
 
     }
 

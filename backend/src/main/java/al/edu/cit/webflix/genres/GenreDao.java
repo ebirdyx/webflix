@@ -1,15 +1,12 @@
 package al.edu.cit.webflix.genres;
 
 import al.edu.cit.webflix.common.IRepository;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
 public class GenreDao implements IRepository<Genre> {
-    private JdbcTemplate jdbc;
-
     @Override
     public List<Genre> getAll() {
         return null;
@@ -21,12 +18,12 @@ public class GenreDao implements IRepository<Genre> {
     }
 
     @Override
-    public void add(Genre item) {
+    public void add(Genre newItem) {
 
     }
 
     @Override
-    public void update(Genre person) {
+    public void update(Genre updatedItem) {
 
     }
 

@@ -18,12 +18,12 @@ public class CountryDao implements IRepository<Country> {
     }
 
     @Override
-    public void add(Country item) {
+    public void add(Country newItem) {
 
     }
 
     @Override
-    public void update(Country person) {
+    public void update(Country updatedItem) {
 
     }
 
