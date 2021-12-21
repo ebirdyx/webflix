@@ -11,7 +11,7 @@ public class XMLRole {
     public String character;
 
     public String getCharacter(){
-        if (character == null) return "NULL";
+        if (character == null) return null;
         return surroundWithSingleQuotes(character);
     }
 }

@@ -19,7 +19,7 @@ public class XMLPerson {
     public String bio;
 
     public String getPhoto() {
-        if (photo == null) return "NULL";
+        if (photo == null) return null;
         return surroundWithSingleQuotes(photo);
     }
 
