@@ -3,7 +3,7 @@ package al.edu.cit.webflix.loader.models.people;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
-import static al.edu.cit.webflix.Utils.toSQLString;
+import static al.edu.cit.webflix.Utils.surroundWithSingleQuotes;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class XMLPerson {
@@ -20,11 +20,11 @@ public class XMLPerson {
 
     public String getPhoto() {
         if (photo == null) return "NULL";
-        return toSQLString(photo.replace("'", "\\'"));
+        return surroundWithSingleQuotes(photo);
     }
 
     public String getName() {
-        return toSQLString(name.replace("'", "\\'"));
+        return surroundWithSingleQuotes(name);
     }
 
     public XMLBirth getBirth() {
@@ -34,6 +34,6 @@ public class XMLPerson {
 
     public String getEscapedBio() {
         if (bio == null) return null;
-        return toSQLString(bio.replace("'", "\\'"));
+        return surroundWithSingleQuotes(bio);
     }
 }

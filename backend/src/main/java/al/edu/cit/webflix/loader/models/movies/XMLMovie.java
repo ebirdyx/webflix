@@ -7,7 +7,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import java.util.ArrayList;
 import java.util.List;
 
-import static al.edu.cit.webflix.Utils.toSQLString;
+import static al.edu.cit.webflix.Utils.surroundWithSingleQuotes;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class XMLMovie {
@@ -45,12 +45,12 @@ public class XMLMovie {
 
 
     public String getTitle() {
-        return toSQLString(title.replace("'", "\\'"));
+        return surroundWithSingleQuotes(title);
     }
 
     public String getEscapedSynopsy() {
         if (synopsy == null) return null;
-        return toSQLString(synopsy.replace("'", "\\'"));
+        return surroundWithSingleQuotes(synopsy);
     }
 
     public XMLDirector getDirector() {
@@ -60,6 +60,6 @@ public class XMLMovie {
 
     public String getEscapedCover() {
         if (cover == null) return null;
-        return toSQLString(cover.replace("'", "\\'"));
+        return surroundWithSingleQuotes(cover);
     }
 }

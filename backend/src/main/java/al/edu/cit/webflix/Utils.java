@@ -5,8 +5,12 @@ import org.springframework.core.io.ClassPathResource;
 import java.io.*;
 
 public class Utils {
-    public static String toSQLString(String s) {
-        return "'" + s + "'";
+    public static String surroundWithSingleQuotes(String s) {
+        return "'" + escapeSingleQuotes(s) + "'";
+    }
+
+    public static String escapeSingleQuotes(String s) {
+        return s.replace("'", "\\'");
     }
 
     public static String inputStreamToString(InputStream is) throws IOException {

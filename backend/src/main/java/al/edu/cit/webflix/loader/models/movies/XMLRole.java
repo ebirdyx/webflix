@@ -2,7 +2,7 @@ package al.edu.cit.webflix.loader.models.movies;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import static al.edu.cit.webflix.Utils.toSQLString;
+import static al.edu.cit.webflix.Utils.surroundWithSingleQuotes;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class XMLRole {
@@ -12,6 +12,6 @@ public class XMLRole {
 
     public String getCharacter(){
         if (character == null) return "NULL";
-        return toSQLString(character) + ", ";
+        return surroundWithSingleQuotes(character);
     }
 }
