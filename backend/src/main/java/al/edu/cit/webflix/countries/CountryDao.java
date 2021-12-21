@@ -1,32 +1,29 @@
-package al.edu.cit.webflix.people;
+package al.edu.cit.webflix.countries;
 
 import al.edu.cit.webflix.common.IRepository;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-@AllArgsConstructor
-public class PersonDao implements IRepository<Person> {
-
+public class CountryDao implements IRepository<Country> {
     @Override
-    public List<Person> getAll() {
+    public List<Country> getAll() {
         return null;
     }
 
     @Override
-    public Person get(int id) {
+    public Country get(int id) {
         return null;
     }
 
     @Override
-    public void add(Person item) {
+    public void add(Country item) {
 
     }
 
     @Override
-    public void update(Person person) {
+    public void update(Country person) {
 
     }
 

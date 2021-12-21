@@ -1,5 +1,6 @@
-package al.edu.cit.webflix;
+package al.edu.cit.webflix.common;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.*;
@@ -24,5 +25,14 @@ public class Utils {
     public static String readFileFromResources(String filename) throws IOException {
         File file = new ClassPathResource(filename).getFile();
         return inputStreamToString(new FileInputStream(file));
+    }
+
+    public static Object deserializeXmlObject(String content, Class valueType) throws IOException {
+        XmlMapper xmlMapper = XmlMapper
+                .builder()
+                .defaultUseWrapper(false)
+                .build();
+
+        return xmlMapper.readValue(content, valueType);
     }
 }

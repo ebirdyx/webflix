@@ -7,7 +7,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import java.util.ArrayList;
 import java.util.List;
 
-import static al.edu.cit.webflix.Utils.surroundWithSingleQuotes;
+import static al.edu.cit.webflix.common.Utils.surroundWithSingleQuotes;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class XMLMovie {
