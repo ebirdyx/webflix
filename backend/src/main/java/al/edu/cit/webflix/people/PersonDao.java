@@ -24,8 +24,12 @@ public class PersonDao implements IRepository<Person> {
     private static final String COUNT_QUERY = "select * from People;";
     private static final String INSERT_QUERY =
             "insert into People " +
-            "(id, name, dob, bio, photo, birth_city, birth_state, birth_country) " +
-            "values(?, ?, ?, ?, ?, ?, ?, ?);";
+            "(name, dob, bio, photo, birth_city, birth_state, birth_country) " +
+            "values(?, ?, ?, ?, ?, ?, ?);";
+    private static final String BATCH_INSERT_QUERY =
+            "insert into People " +
+                    "(id, name, dob, bio, photo, birth_city, birth_state, birth_country) " +
+                    "values(?, ?, ?, ?, ?, ?, ?, ?);";
     private static final String UPDATE_QUERY =
             "update People set " +
             "name = ?, dob = ?, bio = ?, photo = ?, birth_city = ?, birth_state = ?, birth_country = ?" +
@@ -51,6 +55,23 @@ public class PersonDao implements IRepository<Person> {
 
     private ParameterizedPreparedStatementSetter<Person> prepareInsertStatement() {
         return (ps, person) -> {
+            ps.setString(1, person.getName());
+            ps.setString(2, dateToString(person.getDob()));
+            ps.setString(3, person.getBio());
+            ps.setString(4, person.getPhoto());
+            ps.setString(5, person.getBirthCity());
+            ps.setString(6, person.getBirthState());
+            ps.setString(7, person.getBirthCountry());
+        };
+    }
+
+    @Override
+    public void insert(Person newItem) {
+        jdbc.update(INSERT_QUERY, prepareInsertStatement());
+    }
+
+    private ParameterizedPreparedStatementSetter<Person> prepareBatchInsertStatement() {
+        return (ps, person) -> {
             ps.setInt(1, person.getId());
             ps.setString(2, person.getName());
             ps.setString(3, dateToString(person.getDob()));
@@ -61,28 +82,22 @@ public class PersonDao implements IRepository<Person> {
             ps.setString(8, person.getBirthCountry());
         };
     }
-
-    @Override
-    public void insert(Person newItem) {
-        jdbc.update(INSERT_QUERY, prepareInsertStatement());
-    }
-
     @Transactional
     @Override
     public void batchInsert(List<Person> items) {
-        jdbc.batchUpdate(INSERT_QUERY, items, BATCH_SIZE, prepareInsertStatement());
+        jdbc.batchUpdate(BATCH_INSERT_QUERY, items, BATCH_SIZE, prepareBatchInsertStatement());
     }
 
     private ParameterizedPreparedStatementSetter<Person> prepareUpdateStatement() {
         return (ps, person) -> {
-            ps.setString(2, person.getName());
-            ps.setString(3, dateToString(person.getDob()));
-            ps.setString(4, person.getBio());
-            ps.setString(5, person.getPhoto());
-            ps.setString(6, person.getBirthCity());
-            ps.setString(7, person.getBirthState());
-            ps.setString(8, person.getBirthCountry());
-            ps.setInt(1, person.getId());
+            ps.setString(1, person.getName());
+            ps.setString(2, dateToString(person.getDob()));
+            ps.setString(3, person.getBio());
+            ps.setString(4, person.getPhoto());
+            ps.setString(5, person.getBirthCity());
+            ps.setString(6, person.getBirthState());
+            ps.setString(7, person.getBirthCountry());
+            ps.setInt(8, person.getId());
         };
     }
 
