@@ -8,6 +8,11 @@ import java.util.List;
 @Repository
 public class CountryDao implements IRepository<Country> {
     @Override
+    public int count() {
+        return 0;
+    }
+
+    @Override
     public List<Country> getAll() {
         return null;
     }
@@ -18,7 +23,12 @@ public class CountryDao implements IRepository<Country> {
     }
 
     @Override
-    public void add(Country newItem) {
+    public void insert(Country newItem) {
+
+    }
+
+    @Override
+    public void batchInsert(List<Country> items) {
 
     }
 

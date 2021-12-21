@@ -21,6 +21,7 @@ public class Utils {
     }
 
     public static String dateToString(Date d) {
+        if (d == null) return null;
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return dateFormat.format(d);
     }

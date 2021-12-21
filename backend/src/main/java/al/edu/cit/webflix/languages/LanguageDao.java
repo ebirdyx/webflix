@@ -8,6 +8,11 @@ import java.util.List;
 @Repository
 public class LanguageDao implements IRepository<Language> {
     @Override
+    public int count() {
+        return 0;
+    }
+
+    @Override
     public List<Language> getAll() {
         return null;
     }
@@ -18,7 +23,12 @@ public class LanguageDao implements IRepository<Language> {
     }
 
     @Override
-    public void add(Language newItem) {
+    public void insert(Language newItem) {
+
+    }
+
+    @Override
+    public void batchInsert(List<Language> items) {
 
     }
 

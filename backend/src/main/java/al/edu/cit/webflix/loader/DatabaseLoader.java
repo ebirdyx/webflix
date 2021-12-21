@@ -17,7 +17,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static al.edu.cit.webflix.common.Utils.deserializeXmlObject;
 import static al.edu.cit.webflix.common.Utils.readFileFromResources;
@@ -35,8 +37,8 @@ class DatabaseLoader implements CommandLineRunner {
         try {
             String xml = readFileFromResources("data/people_latin1.xml");
             XMLPeople people = (XMLPeople) deserializeXmlObject(xml, XMLPeople.class);
-            people.people.forEach(person -> {
-                Person p = new PersonBuilder()
+            List<Person> p = people.people.stream().map(person ->
+                new PersonBuilder()
                         .setId(person.id)
                         .setName(person.name)
                         .setDob(person.birth.getDob())
@@ -45,10 +47,9 @@ class DatabaseLoader implements CommandLineRunner {
                         .setBirthCity(person.birth.getCityOfBirth())
                         .setBirthState(person.birth.getStateOfBirth())
                         .setBirthCountry(person.birth.getCountryOfBirth())
-                        .build();
-
-                personDao.add(p);
-            });
+                        .build())
+                    .collect(Collectors.toList());
+            personDao.batchInsert(p);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -77,7 +78,7 @@ class DatabaseLoader implements CommandLineRunner {
 
         genres.stream().forEach(genre -> {
             String query = "insert into Genre(name) values('" + genre + "');";
-            genreDao.add(new Genre());
+            genreDao.insert(new Genre());
         });
 
         Set<String> countries = new HashSet<>();
@@ -88,7 +89,7 @@ class DatabaseLoader implements CommandLineRunner {
 
         countries.stream().forEach(country -> {
             String query = "insert into ProductionCountry(name) values('" + country + "');";
-            countryDao.add(new Country());
+            countryDao.insert(new Country());
         });
 
         Set<String> languages = new HashSet<>();
@@ -101,7 +102,7 @@ class DatabaseLoader implements CommandLineRunner {
 
         languages.stream().forEach(language -> {
             String query = "insert into MovieLanguages(name) values('" + language + "');";
-            languageDao.add(new Language());
+            languageDao.insert(new Language());
         });
 
         movies.movies.stream().forEach(xmlMovie -> {
@@ -120,7 +121,9 @@ class DatabaseLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        loadPeople();
+        if (personDao.count() == 0)
+            loadPeople();
+
 //        loadMovies();
     }
 }

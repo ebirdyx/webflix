@@ -8,6 +8,11 @@ import java.util.List;
 @Repository
 public class GenreDao implements IRepository<Genre> {
     @Override
+    public int count() {
+        return 0;
+    }
+
+    @Override
     public List<Genre> getAll() {
         return null;
     }
@@ -18,7 +23,12 @@ public class GenreDao implements IRepository<Genre> {
     }
 
     @Override
-    public void add(Genre newItem) {
+    public void insert(Genre newItem) {
+
+    }
+
+    @Override
+    public void batchInsert(List<Genre> items) {
 
     }
 
