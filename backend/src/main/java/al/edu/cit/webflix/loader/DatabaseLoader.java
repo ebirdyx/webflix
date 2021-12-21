@@ -1,37 +1,20 @@
 package al.edu.cit.webflix.loader;
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import al.edu.cit.webflix.loader.models.movies.XMLMovies;
 import al.edu.cit.webflix.loader.models.people.XMLPeople;
 import al.edu.cit.webflix.loader.models.people.XMLPerson;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.springframework.boot.CommandLineRunner;
 
-import java.io.*;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
+import java.io.IOException;
 import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
 
-import static al.edu.cit.webflix.Utils.inputStreamToString;
+import static al.edu.cit.webflix.Utils.readFileFromResources;
 
 class DatabaseLoader implements CommandLineRunner {
     private static Connection conn = null;
-
-    private static String readXMLFileFromResources(String filename) {
-        // get resources folder path
-        Path root = FileSystems.getDefault().getPath("resources").toAbsolutePath();
-        File file = root.resolve(filename).toFile();
-
-        String content = null;
-        try {
-            content = inputStreamToString(new FileInputStream(file));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return content;
-    }
 
     // XML -> Object
     private static Object deserializeObjectFromXML(String content, Class type) {
@@ -72,7 +55,13 @@ class DatabaseLoader implements CommandLineRunner {
     }
 
     public static void loadPeople() {
-        String xml = readXMLFileFromResources("people_latin1.xml");
+        String xml = null;
+        try {
+            xml = readFileFromResources("data/people_latin1.xml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         XMLPeople people = (XMLPeople) deserializeObjectFromXML(xml, XMLPeople.class);
 
         for (XMLPerson person : people.people) {
@@ -88,7 +77,13 @@ class DatabaseLoader implements CommandLineRunner {
     }
 
     public static void loadMovies() {
-        String xml = readXMLFileFromResources("movies_latin1.xml");
+        String xml = null;
+        try {
+            xml = readFileFromResources("data/movies_latin1.xml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         XMLMovies movies = (XMLMovies) deserializeObjectFromXML(xml, XMLMovies.class);
 
 //        Set<String> genres = new HashSet<>();

@@ -1,9 +1,8 @@
 package al.edu.cit.webflix;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import org.springframework.core.io.ClassPathResource;
+
+import java.io.*;
 
 public class Utils {
     public static String toSQLString(String s) {
@@ -19,5 +18,10 @@ public class Utils {
         }
         br.close();
         return sb.toString();
+    }
+
+    public static String readFileFromResources(String filename) throws IOException {
+        File file = new ClassPathResource(filename).getFile();
+        return inputStreamToString(new FileInputStream(file));
     }
 }
