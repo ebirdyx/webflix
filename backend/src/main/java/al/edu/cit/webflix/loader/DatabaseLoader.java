@@ -86,27 +86,27 @@ class DatabaseLoader implements CommandLineRunner {
 
         XMLMovies movies = (XMLMovies) deserializeObjectFromXML(xml, XMLMovies.class);
 
-//        Set<String> genres = new HashSet<>();
-//
-//        movies.movies.stream()
-//                .forEach(xmlMovie -> xmlMovie.genres.stream()
-//                        .forEach(genre -> genres.add(genre)));
-//
-//        genres.stream().forEach(genre -> {
-//            String query = "insert into Genre(name) values('" + genre + "');";
-//            runQueryOnDatabase(query);
-//        });
+        Set<String> genres = new HashSet<>();
 
-//        Set<String> countries = new HashSet<>();
-//
-//        movies.movies.stream()
-//                .forEach(xmlMovie -> xmlMovie.countries.stream()
-//                        .forEach(country -> countries.add(country)));
-//
-//        countries.stream().forEach(country -> {
-//            String query = "insert into ProductionCountry(name) values('" + country + "');";
-//            runQueryOnDatabase(query);
-//        });
+        movies.movies.stream()
+                .forEach(xmlMovie -> xmlMovie.genres.stream()
+                        .forEach(genre -> genres.add(genre)));
+
+        genres.stream().forEach(genre -> {
+            String query = "insert into Genre(name) values('" + genre + "');";
+            runQueryOnDatabase(query);
+        });
+
+        Set<String> countries = new HashSet<>();
+
+        movies.movies.stream()
+                .forEach(xmlMovie -> xmlMovie.countries.stream()
+                        .forEach(country -> countries.add(country)));
+
+        countries.stream().forEach(country -> {
+            String query = "insert into ProductionCountry(name) values('" + country + "');";
+            runQueryOnDatabase(query);
+        });
 
         Set<String> languages = new HashSet<>();
 
@@ -139,7 +139,7 @@ class DatabaseLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        //        loadPeople();
+        loadPeople();
         loadMovies();
 
         try {
