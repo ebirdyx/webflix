@@ -3,7 +3,7 @@ package al.edu.cit.webflix.loader.models.people;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
-import static al.edu.cit.webflix.loader.models.Utils.toSQLString;
+import static al.edu.cit.webflix.Utils.toSQLString;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class XMLPerson {

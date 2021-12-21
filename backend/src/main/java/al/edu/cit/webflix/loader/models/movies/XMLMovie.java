@@ -7,7 +7,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import java.util.ArrayList;
 import java.util.List;
 
-import static al.edu.cit.webflix.loader.models.Utils.toSQLString;
+import static al.edu.cit.webflix.Utils.toSQLString;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class XMLMovie {

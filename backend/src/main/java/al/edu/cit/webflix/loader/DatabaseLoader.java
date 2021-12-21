@@ -13,6 +13,8 @@ import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import static al.edu.cit.webflix.Utils.inputStreamToString;
+
 class DatabaseLoader implements CommandLineRunner {
     private static Connection conn = null;
 
@@ -138,16 +140,7 @@ class DatabaseLoader implements CommandLineRunner {
         });
     }
 
-    public static String inputStreamToString(InputStream is) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        String line;
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        while ((line = br.readLine()) != null) {
-            sb.append(line);
-        }
-        br.close();
-        return sb.toString();
-    }
+
 
     @Override
     public void run(String... args) throws Exception {
