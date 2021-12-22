@@ -17,6 +17,7 @@ public class GenreDao implements IRepository<Genre> {
 
     private static final String GET_ALL_QUERY = "select * from Genre;";
     private static final String GET_BY_ID_QUERY = "select * from Genre where id = ?;";
+    private static final String FIND_BY_NAME = "select * from Genre where name = ?;";
     private static final String COUNT_QUERY = "select * from Genre;";
     private static final String INSERT_QUERY =
             "insert into Genre (name) values(?);";
@@ -33,12 +34,16 @@ public class GenreDao implements IRepository<Genre> {
 
     @Override
     public List<Genre> getAll() {
-        return jdbc.queryForList(GET_ALL_QUERY, Genre.class);
+        return jdbc.query(GET_ALL_QUERY, new GenreRowMapper());
     }
 
     @Override
     public Genre get(int id) {
-        return jdbc.queryForObject(GET_BY_ID_QUERY, Genre.class, id);
+        return jdbc.queryForObject(GET_BY_ID_QUERY, new GenreRowMapper(), id);
+    }
+
+    public Genre findByName(String genre) {
+        return jdbc.queryForObject(FIND_BY_NAME, new GenreRowMapper(), genre);
     }
 
     @Override

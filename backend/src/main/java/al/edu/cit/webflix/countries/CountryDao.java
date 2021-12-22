@@ -17,6 +17,7 @@ public class CountryDao implements IRepository<Country> {
 
     private static final String GET_ALL_QUERY = "select * from ProductionCountry;";
     private static final String GET_BY_ID_QUERY = "select * from ProductionCountry where id = ?;";
+    private static final String FIND_BY_NAME ="select * from ProductionCountry where name = ?;";
     private static final String COUNT_QUERY = "select * from ProductionCountry;";
     private static final String INSERT_QUERY =
             "insert into ProductionCountry (name) values(?);";
@@ -33,12 +34,16 @@ public class CountryDao implements IRepository<Country> {
 
     @Override
     public List<Country> getAll() {
-        return jdbc.queryForList(GET_ALL_QUERY, Country.class);
+        return jdbc.query(GET_ALL_QUERY, new CountryRowMapper());
     }
 
     @Override
     public Country get(int id) {
-        return jdbc.queryForObject(GET_BY_ID_QUERY, Country.class, id);
+        return jdbc.queryForObject(GET_BY_ID_QUERY, new CountryRowMapper(), id);
+    }
+
+    public Country findByName(String name) {
+        return jdbc.queryForObject(FIND_BY_NAME, new CountryRowMapper(), name);
     }
 
     @Override

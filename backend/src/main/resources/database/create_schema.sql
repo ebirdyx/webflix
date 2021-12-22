@@ -72,23 +72,23 @@ create table Movie
     duration        int,
     synopsis        text,
     cover           text,
-    language_id     int references MovieLanguages(id),
-    director_id     int references People(id)
+    language_id     int references MovieLanguages (id),
+    director_id     int references People (id)
 );
 
 create table Scriptwriter
 (
-    id   int primary key auto_increment NOT NULL,
-    name varchar(100),
-    movie_id int references Movie(id)
+    id       int primary key auto_increment NOT NULL,
+    name     varchar(100),
+    movie_id int references Movie (id)
 );
 
 create table PersonRolePlayed
 (
-    person_id    int references People (id),
-    movie_id     int references Movie (id),
+    id             int primary key auto_increment NOT NULL,
     character_name varchar(100),
-    primary key (movie_id, person_id)
+    person_id      int references People (id),
+    movie_id       int references Movie (id)
 );
 
 create table ProductionCountry
@@ -99,9 +99,9 @@ create table ProductionCountry
 
 create table MovieProductionCountry
 (
+    id         int primary key auto_increment NOT NULL,
     country_id int references ProductionCountry (id),
-    movie_id   int references Movie (id),
-    primary key (movie_id, country_id)
+    movie_id   int references Movie (id)
 );
 
 create table Genre
@@ -112,9 +112,9 @@ create table Genre
 
 create table MovieGenre
 (
+    id       int primary key auto_increment NOT NULL,
     movie_id int references Movie (id),
-    genre_id int references Genre (id),
-    primary key (movie_id, genre_id)
+    genre_id int references Genre (id)
 );
 
 create table Subscription
