@@ -37,10 +37,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static al.edu.cit.webflix.common.Utils.deserializeXmlObject;
@@ -204,9 +201,10 @@ class DatabaseLoader implements CommandLineRunner {
                             .setPublishingYear(xmlMovie.year)
                             .setSynopsis(xmlMovie.synopsy)
                             .setCover(xmlMovie.cover)
-                            .setDirectorId(xmlMovie.director.id)
-                            .setLanguageId(languageDao.findByName(xmlMovie.language).getId())
+                            .setDirectorId(xmlMovie.director.id != 0 ? xmlMovie.director.id : 1)
+                            .setLanguageId(languageDao.findByName(Objects.requireNonNullElse(xmlMovie.language, "English")).getId())
                             .build();
+
                 }).collect(Collectors.toList());
 
         movieDao.batchInsert(movies);

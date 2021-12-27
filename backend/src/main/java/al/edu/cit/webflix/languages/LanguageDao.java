@@ -43,7 +43,7 @@ public class LanguageDao implements IRepository<Language> {
     }
 
     public Language findByName(String name) {
-        return jdbc.queryForObject(FIND_BY_NAME, Language.class, name);
+        return jdbc.queryForObject(FIND_BY_NAME, new LanguageRowMapper(), name);
     }
 
     @Override
