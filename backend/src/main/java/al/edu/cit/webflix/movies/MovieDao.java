@@ -42,7 +42,7 @@ public class MovieDao implements IRepository<Movie> {
 
     @Override
     public List<Movie> getAll() {
-        return jdbc.queryForList(GET_ALL_QUERY, Movie.class);
+        return jdbc.query(GET_ALL_QUERY, new MovieRowMapper());
     }
 
     @Override
