@@ -176,7 +176,7 @@ class DatabaseLoader implements CommandLineRunner {
                     actors.addAll(xmlMovie.roles.stream()
                             .map(a -> new ActorBuilder()
                                     .setCharacterName(a.character)
-                                    .setPersonId(a.actor.id)
+                                    .setPerson(personDao.get(a.actor.id))
                                     .setMovieId(xmlMovie.id)
                                     .build())
                             .collect(Collectors.toList()));
@@ -201,8 +201,9 @@ class DatabaseLoader implements CommandLineRunner {
                             .setPublishingYear(xmlMovie.year)
                             .setSynopsis(xmlMovie.synopsis)
                             .setCover(xmlMovie.cover)
-                            .setDirectorId(xmlMovie.director.id != 0 ? xmlMovie.director.id : 1)
-                            .setLanguageId(languageDao.findByName(Objects.requireNonNullElse(xmlMovie.language, "English")).getId())
+                            .setDirector(personDao.get(xmlMovie.director.id))
+//                            .setDirectorId(xmlMovie.director.id != 0 ? xmlMovie.director.id : 1)
+                            .setLanguage(languageDao.findByName(Objects.requireNonNullElse(xmlMovie.language, "English")))
                             .build();
 
                 }).collect(Collectors.toList());
