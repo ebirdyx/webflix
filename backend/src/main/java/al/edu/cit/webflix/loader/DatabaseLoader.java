@@ -183,14 +183,14 @@ class DatabaseLoader implements CommandLineRunner {
 
                     movieGenres.addAll(xmlMovie.genres.stream()
                             .map(g -> new MovieGenreBuilder()
-                                    .setGenreId(genreDao.findByName(g).getId())
+                                    .setGenre(genreDao.findByName(g))
                                     .setMovieId(xmlMovie.id)
                                     .build())
                             .collect(Collectors.toList()));
 
                     movieProductionCountries.addAll(xmlMovie.countries.stream()
                             .map(c -> new MovieProductionCountryBuilder()
-                                    .setCountryId(countryDao.findByName(c).getId())
+                                    .setCountry(countryDao.findByName(c))
                                     .setMovieId(xmlMovie.id)
                                     .build())
                             .collect(Collectors.toList()));

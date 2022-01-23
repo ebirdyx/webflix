@@ -1,5 +1,7 @@
 package al.edu.cit.webflix.movies.countries;
 
+import al.edu.cit.webflix.countries.Country;
+
 public class MovieProductionCountryBuilder {
     private final MovieProductionCountry movieProductionCountry = new MovieProductionCountry();
 
@@ -8,8 +10,8 @@ public class MovieProductionCountryBuilder {
         return this;
     }
 
-    public MovieProductionCountryBuilder setCountryId(int countryId) {
-        movieProductionCountry.setCountryId(countryId);
+    public MovieProductionCountryBuilder setCountry(Country country) {
+        movieProductionCountry.setCountry(country);
         return this;
     }
 

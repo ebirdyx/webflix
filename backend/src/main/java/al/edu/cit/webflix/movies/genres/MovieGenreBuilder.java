@@ -1,5 +1,7 @@
 package al.edu.cit.webflix.movies.genres;
 
+import al.edu.cit.webflix.genres.Genre;
+
 public class MovieGenreBuilder {
     private final MovieGenre movieGenre = new MovieGenre();
 
@@ -8,8 +10,8 @@ public class MovieGenreBuilder {
         return this;
     }
 
-    public MovieGenreBuilder setGenreId(int genreId) {
-        movieGenre.setGenreId(genreId);
+    public MovieGenreBuilder setGenre(Genre genre) {
+        movieGenre.setGenre(genre);
         return this;
     }
 
