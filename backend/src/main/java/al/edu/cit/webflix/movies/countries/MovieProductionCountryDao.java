@@ -1,6 +1,8 @@
 package al.edu.cit.webflix.movies.countries;
 
 import al.edu.cit.webflix.common.IRepository;
+import al.edu.cit.webflix.countries.Country;
+import al.edu.cit.webflix.countries.CountryDao;
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
@@ -8,16 +10,19 @@ import org.springframework.jdbc.core.RowCountCallbackHandler;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 @AllArgsConstructor
 public class MovieProductionCountryDao implements IRepository<MovieProductionCountry> {
     private JdbcTemplate jdbc;
+    private CountryDao countryDao;
 
     private static final int BATCH_SIZE = 500;
 
     private static final String GET_ALL_QUERY = "select * from MovieProductionCountry;";
     private static final String GET_BY_ID_QUERY = "select * from MovieProductionCountry where id = ?;";
+    private static final String GET_BY_MOVIE_ID_QUERY = "select * from MovieProductionCountry where movie_id = ?;";
     private static final String COUNT_QUERY = "select * from MovieProductionCountry;";
     private static final String INSERT_QUERY =
             "insert into MovieProductionCountry (country_id, movie_id) values(?, ?);";
@@ -33,22 +38,22 @@ public class MovieProductionCountryDao implements IRepository<MovieProductionCou
 
     @Override
     public List<MovieProductionCountry> getAll() {
-        return jdbc.queryForList(GET_ALL_QUERY, MovieProductionCountry.class);
+        return jdbc.query(GET_ALL_QUERY, new MovieProductionCountryRowMapper(countryDao));
     }
 
     @Override
     public MovieProductionCountry get(int id) {
-        return jdbc.queryForObject(GET_BY_ID_QUERY, MovieProductionCountry.class, id);
+        return jdbc.queryForObject(GET_BY_ID_QUERY, new MovieProductionCountryRowMapper(countryDao), id);
     }
 
     @Override
     public void insert(MovieProductionCountry newItem) {
-        jdbc.update(INSERT_QUERY, newItem.getCountryId(), newItem.getMovieId());
+        jdbc.update(INSERT_QUERY, newItem.getCountry().getId(), newItem.getMovieId());
     }
 
     private ParameterizedPreparedStatementSetter<MovieProductionCountry> prepareBatchInsertStatement() {
         return (ps, movieProductionCountry) -> {
-            ps.setInt(1, movieProductionCountry.getCountryId());
+            ps.setInt(1, movieProductionCountry.getCountry().getId());
             ps.setInt(2, movieProductionCountry.getMovieId());
         };
     }
@@ -66,4 +71,10 @@ public class MovieProductionCountryDao implements IRepository<MovieProductionCou
         jdbc.update(DELETE_QUERY, id);
     }
 
+    public List<Country> getMovieProductionCountries(int movieId) {
+        return jdbc.query(GET_BY_MOVIE_ID_QUERY, new MovieProductionCountryRowMapper(countryDao), movieId)
+                .stream()
+                .map(MovieProductionCountry::getCountry)
+                .collect(Collectors.toList());
+    }
 }

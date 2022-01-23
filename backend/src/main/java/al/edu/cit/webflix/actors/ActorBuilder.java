@@ -1,5 +1,7 @@
 package al.edu.cit.webflix.actors;
 
+import al.edu.cit.webflix.people.Person;
+
 public class ActorBuilder {
     private final Actor actor = new Actor();
 
@@ -8,8 +10,8 @@ public class ActorBuilder {
         return this;
     }
 
-    public ActorBuilder setPersonId(int personId) {
-        actor.setPersonId(personId);
+    public ActorBuilder setPerson(Person person) {
+        actor.setPerson(person);
         return this;
     }
 

@@ -1,6 +1,15 @@
 package al.edu.cit.webflix.movies;
 
+import al.edu.cit.webflix.actors.ActorDao;
 import al.edu.cit.webflix.common.IRepository;
+import al.edu.cit.webflix.genres.Genre;
+import al.edu.cit.webflix.genres.GenreDao;
+import al.edu.cit.webflix.languages.LanguageDao;
+import al.edu.cit.webflix.movies.countries.MovieProductionCountryDao;
+import al.edu.cit.webflix.movies.genres.MovieGenreDao;
+import al.edu.cit.webflix.people.PersonDao;
+import al.edu.cit.webflix.scriptwriter.ScriptwriterDao;
+import al.edu.cit.webflix.trailers.TrailerDao;
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
@@ -13,6 +22,31 @@ import java.util.List;
 @AllArgsConstructor
 public class MovieDao implements IRepository<Movie> {
     private JdbcTemplate jdbc;
+    private LanguageDao languageDao;
+    private PersonDao personDao;
+    private ActorDao actorDao;
+    private TrailerDao trailerDao;
+    private MovieProductionCountryDao movieProductionCountryDao;
+    private MovieGenreDao movieGenreDao;
+    private ScriptwriterDao scriptwriterDao;
+
+    // Don't use directly, use getMapper instead (Singleton)
+    private MovieRowMapper _mapper;
+
+    private MovieRowMapper getMapper() {
+        if (_mapper == null)
+            _mapper = new MovieRowMapper(
+                    languageDao,
+                    personDao,
+                    actorDao,
+                    trailerDao,
+                    movieProductionCountryDao,
+                    movieGenreDao,
+                    scriptwriterDao
+            );
+
+        return _mapper;
+    }
 
     private static final int BATCH_SIZE = 500;
 
@@ -42,12 +76,12 @@ public class MovieDao implements IRepository<Movie> {
 
     @Override
     public List<Movie> getAll() {
-        return jdbc.query(GET_ALL_QUERY, new MovieRowMapper());
+        return jdbc.query(GET_ALL_QUERY, getMapper());
     }
 
     @Override
     public Movie get(int id) {
-        return jdbc.queryForObject(GET_BY_ID_QUERY, Movie.class, id);
+        return jdbc.queryForObject(GET_BY_ID_QUERY, getMapper(), id);
     }
 
     private ParameterizedPreparedStatementSetter<Movie> prepareInsertStatement() {
@@ -57,8 +91,8 @@ public class MovieDao implements IRepository<Movie> {
             ps.setInt(3, movie.getDuration());
             ps.setString(4, movie.getSynopsis());
             ps.setString(5, movie.getCover());
-            ps.setInt(6, movie.getLanguageId());
-            ps.setInt(7, movie.getDirectorId());
+            ps.setInt(6, movie.getLanguage() != null ? movie.getLanguage().getId() : null);
+            ps.setInt(7, movie.getDirector() != null ? movie.getDirector().getId(): null);
         };
     }
 
@@ -75,8 +109,8 @@ public class MovieDao implements IRepository<Movie> {
             ps.setInt(4, movie.getDuration());
             ps.setString(5, movie.getSynopsis());
             ps.setString(6, movie.getCover());
-            ps.setInt(7, movie.getLanguageId());
-            ps.setInt(8, movie.getDirectorId());
+            ps.setInt(7, movie.getLanguage() != null ? movie.getLanguage().getId() : null);
+            ps.setInt(8, movie.getDirector() != null ? movie.getDirector().getId(): null);
         };
     }
 
@@ -92,8 +126,8 @@ public class MovieDao implements IRepository<Movie> {
             ps.setInt(3, movie.getDuration());
             ps.setString(4, movie.getSynopsis());
             ps.setString(5, movie.getCover());
-            ps.setInt(6, movie.getLanguageId());
-            ps.setInt(7, movie.getDirectorId());
+            ps.setInt(6, movie.getLanguage() != null ? movie.getLanguage().getId() : null);
+            ps.setInt(7, movie.getDirector() != null ? movie.getDirector().getId(): null);
             ps.setInt(8, movie.getId());
         };
     }

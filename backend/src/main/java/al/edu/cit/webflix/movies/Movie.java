@@ -1,6 +1,15 @@
 package al.edu.cit.webflix.movies;
 
+import al.edu.cit.webflix.actors.Actor;
+import al.edu.cit.webflix.countries.Country;
+import al.edu.cit.webflix.genres.Genre;
+import al.edu.cit.webflix.languages.Language;
+import al.edu.cit.webflix.people.Person;
+import al.edu.cit.webflix.scriptwriter.Scriptwriter;
+import al.edu.cit.webflix.trailers.Trailer;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class Movie {
@@ -16,7 +25,17 @@ public class Movie {
 
     private String cover;
 
-    private int languageId;
+    private List<Actor> actors;
 
-    private int directorId;
+    private List<Trailer> trailers;
+
+    private List<Scriptwriter> scriptwriters;
+
+    private List<Country> productionCountries;
+
+    private Language language;
+
+    private Person director;
+
+    private List<Genre> genres;
 }

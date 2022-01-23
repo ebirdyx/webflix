@@ -23,7 +23,7 @@ public class XMLMovie {
 
     public int duration;
 
-    public String synopsy;
+    public String synopsis;
 
     @JsonProperty("genre")
     public List<String> genres = new ArrayList<>();

@@ -18,6 +18,7 @@ public class TrailerDao implements IRepository<Trailer> {
 
     private static final String GET_ALL_QUERY = "select * from Trailer;";
     private static final String GET_BY_ID_QUERY = "select * from Trailer where id = ?;";
+    private static final String GET_BY_MOVIE_ID_QUERY = "select * from Trailer where movie_id = ?;";
     private static final String COUNT_QUERY = "select * from Trailer;";
     private static final String INSERT_QUERY =
             "insert into Trailer (link, movie_id) values(?, ?);";
@@ -35,12 +36,12 @@ public class TrailerDao implements IRepository<Trailer> {
 
     @Override
     public List<Trailer> getAll() {
-        return jdbc.queryForList(GET_ALL_QUERY, Trailer.class);
+        return jdbc.query(GET_ALL_QUERY, new TrailerRowMapper());
     }
 
     @Override
     public Trailer get(int id) {
-        return jdbc.queryForObject(GET_BY_ID_QUERY, Trailer.class, id);
+        return jdbc.queryForObject(GET_BY_ID_QUERY, new TrailerRowMapper(), id);
     }
 
     @Override
@@ -67,5 +68,9 @@ public class TrailerDao implements IRepository<Trailer> {
     @Override
     public void delete(int id) {
         jdbc.update(DELETE_QUERY, id);
+    }
+
+    public List<Trailer> getMovieTrailers(int movieId) {
+        return jdbc.query(GET_BY_MOVIE_ID_QUERY, new TrailerRowMapper(), movieId);
     }
 }

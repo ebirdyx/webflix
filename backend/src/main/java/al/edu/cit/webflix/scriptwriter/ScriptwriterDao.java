@@ -18,6 +18,7 @@ public class ScriptwriterDao implements IRepository<Scriptwriter> {
 
     private static final String GET_ALL_QUERY = "select * from Scriptwriter;";
     private static final String GET_BY_ID_QUERY = "select * from Scriptwriter where id = ?;";
+    private static final String GET_BY_MOVIE_ID_QUERY = "select * from Scriptwriter where movie_id = ?;";
     private static final String COUNT_QUERY = "select * from Scriptwriter;";
     private static final String INSERT_QUERY =
             "insert into Scriptwriter (name, movie_id) values(?, ?);";
@@ -35,12 +36,12 @@ public class ScriptwriterDao implements IRepository<Scriptwriter> {
 
     @Override
     public List<Scriptwriter> getAll() {
-        return jdbc.queryForList(GET_ALL_QUERY, Scriptwriter.class);
+        return jdbc.query(GET_ALL_QUERY, new ScriptwriterRowMapper());
     }
 
     @Override
     public Scriptwriter get(int id) {
-        return jdbc.queryForObject(GET_BY_ID_QUERY, Scriptwriter.class, id);
+        return jdbc.queryForObject(GET_BY_ID_QUERY, new ScriptwriterRowMapper(), id);
     }
 
     @Override
@@ -67,5 +68,9 @@ public class ScriptwriterDao implements IRepository<Scriptwriter> {
     @Override
     public void delete(int id) {
         jdbc.update(DELETE_QUERY, id);
+    }
+
+    public List<Scriptwriter> getMovieScriptWriters(int movieId) {
+        return jdbc.query(GET_BY_MOVIE_ID_QUERY, new ScriptwriterRowMapper(), movieId);
     }
 }

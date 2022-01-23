@@ -21,6 +21,7 @@ drop table if exists ProductionCountry;
 drop table if exists Scriptwriter;
 drop table if exists Movie;
 drop table if exists Subscription;
+drop procedure if exists InsertMovieFromData;
 
 set foreign_key_checks = 1;
 
@@ -191,5 +192,51 @@ create table Trailer
     movie_id int references Movie (id)
 );
 
+-- create procedures
+delimiter //
+create procedure InsertMovie (
+    in id int,
+    in title varchar,
+    in listOfCountries varchar,
+    in language varchar,
+    in duration int,
+    in synopsis varchar,
+    in listOfGenres varchar,
+    in directorId int,
+    in directorName varchar,
+    in listOfScriptwriters varchar,
+    in listOfActors varchar,
+    in cover varchar,
+    in listOfTrailers varchar
+)
+    begin
+        declare scriptwriter varchar;
+        declare trailer varchar;
+        declare actor varchar;
+        declare actor_character_name varchar;
+        declare actor_person_id int;
 
+        insertScriptwriters: while char_length(listOfScriptwriters) > 0 do
+            set scriptwriter = substring_index(listOfScriptwriters, ';', 1);
+            insert into Scriptwriter (name, movie_id) values (scriptwriter, id);
+            set listOfScriptwriters = substring(listOfScriptwriters, locate(';', listOfScriptwriters));
+        end while insertScriptwriters;
 
+        insertTrailers: while char_length(listOfTrailers) > 0 do
+            set trailer = substring_index(listOfTrailers, ';', 1);
+            insert into Trailer (link, movie_id) values (trailer, id);
+            set listOfTrailers = substring(listOfTrailers, locate(';', listOfTrailers));
+        end while insertTrailers;
+
+        insertActors: while char_length(listOfActors) > 0 do
+            set actor = substring_index(listOfActors, ';', 1);
+            set actor_character_name = substring_index(actor, ',', 1);
+            set actor_person_id = substring_index(actor, ',', 2);
+
+            insert into PersonRolePlayed (character_name, person_id, movie_id)
+                values (actor_character_name, actor_person_id, id);
+
+            set listOfActors = substring(listOfActors, locate(';', listOfActors));
+        end while insertActors;
+    end //
+delimiter ;

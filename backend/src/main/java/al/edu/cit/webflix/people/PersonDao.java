@@ -45,12 +45,12 @@ public class PersonDao implements IRepository<Person> {
 
     @Override
     public List<Person> getAll() {
-        return jdbc.queryForList(GET_ALL_QUERY, Person.class);
+        return jdbc.query(GET_ALL_QUERY, new PersonRowMapper());
     }
 
     @Override
     public Person get(int id) {
-        return jdbc.queryForObject(GET_BY_ID_QUERY, Person.class, id);
+        return jdbc.queryForObject(GET_BY_ID_QUERY, new PersonRowMapper(), id);
     }
 
     private ParameterizedPreparedStatementSetter<Person> prepareInsertStatement() {

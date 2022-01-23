@@ -199,7 +199,7 @@ class DatabaseLoader implements CommandLineRunner {
                             .setId(xmlMovie.id)
                             .setTitle(xmlMovie.title)
                             .setPublishingYear(xmlMovie.year)
-                            .setSynopsis(xmlMovie.synopsy)
+                            .setSynopsis(xmlMovie.synopsis)
                             .setCover(xmlMovie.cover)
                             .setDirectorId(xmlMovie.director.id != 0 ? xmlMovie.director.id : 1)
                             .setLanguageId(languageDao.findByName(Objects.requireNonNullElse(xmlMovie.language, "English")).getId())

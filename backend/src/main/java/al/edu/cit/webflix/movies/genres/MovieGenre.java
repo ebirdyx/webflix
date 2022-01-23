@@ -1,5 +1,6 @@
 package al.edu.cit.webflix.movies.genres;
 
+import al.edu.cit.webflix.genres.Genre;
 import lombok.Data;
 
 @Data
@@ -8,5 +9,5 @@ public class MovieGenre {
 
     private int movieId;
 
-    private int genreId;
+    private Genre genre;
 }
