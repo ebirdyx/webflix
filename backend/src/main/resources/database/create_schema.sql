@@ -21,7 +21,7 @@ drop table if exists ProductionCountry;
 drop table if exists Scriptwriter;
 drop table if exists Movie;
 drop table if exists Subscription;
-drop procedure if exists InsertMovieFromData;
+drop procedure if exists InsertMovie;
 
 set foreign_key_checks = 1;
 

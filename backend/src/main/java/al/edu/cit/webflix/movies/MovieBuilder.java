@@ -17,11 +17,13 @@ public class MovieBuilder {
         if (movie.getId() == 0)
             return;
 
-        movie.getTrailers()
-                .forEach(trailer -> trailer.setMovieId(movie.getId()));
+        if (movie.getTrailers() != null)
+            movie.getTrailers()
+                    .forEach(trailer -> trailer.setMovieId(movie.getId()));
 
-        movie.getScriptwriters()
-                .forEach(scriptwriter -> scriptwriter.setMovieId(movie.getId()));
+        if (movie.getScriptwriters() != null)
+            movie.getScriptwriters()
+                    .forEach(scriptwriter -> scriptwriter.setMovieId(movie.getId()));
     }
 
     public MovieBuilder setId(int id) {
