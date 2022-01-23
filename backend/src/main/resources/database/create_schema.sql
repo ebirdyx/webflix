@@ -197,24 +197,24 @@ create table Trailer
 delimiter //
 create procedure InsertMovie (
     in id int,
-    in title varchar,
-    in listOfCountries varchar,
-    in language varchar,
+    in title varchar(100),
+    in listOfCountries text,
+    in language varchar(50),
     in duration int,
-    in synopsis varchar,
-    in listOfGenres varchar,
+    in synopsis text,
+    in listOfGenres text,
     in directorId int,
-    in directorName varchar,
-    in listOfScriptwriters varchar,
-    in listOfActors varchar,
-    in cover varchar,
-    in listOfTrailers varchar
+    in directorName varchar(255),
+    in listOfScriptwriters text,
+    in listOfActors text,
+    in cover text,
+    in listOfTrailers text
 )
     begin
-        declare scriptwriter varchar;
-        declare trailer varchar;
-        declare actor varchar;
-        declare actor_character_name varchar;
+        declare scriptwriter varchar(100);
+        declare trailer text;
+        declare actor text;
+        declare actor_character_name varchar(100);
         declare actor_person_id int;
 
         insertScriptwriters: while char_length(listOfScriptwriters) > 0 do
