@@ -22,9 +22,9 @@ packages are available:
 
 | Flat rate | Cost | Max rentals | Max duration | Code |
 |-----------|------|-------------|--------------|------|
-| Beginner  |$ 5 / month|1 movie|10 days | D    |
-|Intermediate|$ 10 / month|5 films|30 days| I    |
-|Advanced   |$ 15 / month|10 films| unlimited| AT   |
+| Beginner     | $ 5 / month  | 1 movie  | 10 days   | D    |
+| Intermediate | $ 10 / month | 5 films  | 30 days   | I    |
+| Advanced     | $ 15 / month | 10 films | unlimited | AT   |
 
 For these three packages, the following rules apply. 
 - If a customer has fewer films in his possession than the number of rentals allowed by his package, he can rent new ones as long as

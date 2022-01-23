@@ -1,12 +1,12 @@
 package al.edu.cit.webflix.movies;
 
-import al.edu.cit.webflix.actors.Actor;
+import al.edu.cit.webflix.movies.actors.Actor;
 import al.edu.cit.webflix.countries.Country;
 import al.edu.cit.webflix.genres.Genre;
 import al.edu.cit.webflix.languages.Language;
 import al.edu.cit.webflix.people.Person;
-import al.edu.cit.webflix.scriptwriter.Scriptwriter;
-import al.edu.cit.webflix.trailers.Trailer;
+import al.edu.cit.webflix.movies.scriptwriter.Scriptwriter;
+import al.edu.cit.webflix.movies.trailers.Trailer;
 import lombok.Data;
 
 import java.util.List;

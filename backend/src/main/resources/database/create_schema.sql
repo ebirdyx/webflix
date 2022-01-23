@@ -5,12 +5,10 @@ drop table if exists Address;
 drop table if exists User;
 drop table if exists CreditCard;
 drop table if exists PersonRolePlayed;
-drop table if exists Customer;
 drop table if exists CustomerSubscription;
 drop table if exists MovieDVD;
 drop table if exists Trailer;
 drop table if exists SubscriptionPayment;
-drop table if exists Employee;
 drop table if exists MovieGenre;
 drop table if exists Rentals;
 drop table if exists People;
@@ -36,15 +34,27 @@ create table Address
     post_code varchar(100)
 );
 
+create table CreditCard
+(
+    id                    int primary key auto_increment                 not null,
+    no                    text,
+    type                  enum ('MasterCard', 'Visa', 'AmericanExpress') not null,
+    expiration_date_month int,
+    expiration_date_year  int,
+    cvv                   int
+);
+
 create table User
 (
-    id         int primary key auto_increment not null,
-    username   varchar(100),
-    password   varchar(100),
-    first_name varchar(100),
-    last_name  varchar(100),
-    phone_no   varchar(100),
-    address_id int references Address (id)
+    id             int primary key auto_increment not null,
+    user_type      enum ('Customer', 'Employee')  not null,
+    username       varchar(100),
+    password       text,
+    first_name     varchar(100),
+    last_name      varchar(100),
+    phone_no       varchar(100),
+    address_id     int references Address (id),
+    credit_card_id int references CreditCard (id)
 );
 
 create table People
@@ -61,13 +71,13 @@ create table People
 
 create table MovieLanguages
 (
-    id   int primary key auto_increment NOT NULL,
+    id   int primary key auto_increment not null,
     name varchar(50)
 );
 
 create table Movie
 (
-    id              int primary key auto_increment NOT NULL,
+    id              int primary key auto_increment not null,
     title           varchar(100),
     publishing_year int,
     duration        int,
@@ -79,14 +89,14 @@ create table Movie
 
 create table Scriptwriter
 (
-    id       int primary key auto_increment NOT NULL,
+    id       int primary key auto_increment not null,
     name     varchar(100),
     movie_id int references Movie (id)
 );
 
 create table PersonRolePlayed
 (
-    id             int primary key auto_increment NOT NULL,
+    id             int primary key auto_increment not null,
     character_name varchar(100),
     person_id      int references People (id),
     movie_id       int references Movie (id)
@@ -94,84 +104,68 @@ create table PersonRolePlayed
 
 create table ProductionCountry
 (
-    id   int primary key auto_increment NOT NULL,
+    id   int primary key auto_increment not null,
     name varchar(100)
 );
 
 create table MovieProductionCountry
 (
-    id         int primary key auto_increment NOT NULL,
+    id         int primary key auto_increment not null,
     country_id int references ProductionCountry (id),
     movie_id   int references Movie (id)
 );
 
 create table Genre
 (
-    id   int primary key auto_increment NOT NULL,
+    id   int primary key auto_increment not null,
     name varchar(50)
 );
 
 create table MovieGenre
 (
-    id       int primary key auto_increment NOT NULL,
+    id       int primary key auto_increment not null,
     movie_id int references Movie (id),
     genre_id int references Genre (id)
 );
 
 create table Subscription
 (
-    id           int primary key auto_increment NOT NULL,
+    id           int primary key auto_increment not null,
+    name         varchar(100),
     code         varchar(3),
-    cost         int,
-    flat_rate    varchar(100),
+    cost         float(10, 2),
     max_rentals  int,
     max_duration int
 );
 
-create table CreditCard
-(
-    id                    int primary key auto_increment NOT NULL,
-    no                    int,
-    type                  varchar(50),
-    expiration_date_month int,
-    expiration_date_year  int,
-    cvv                   int
-);
-
-create table Employee
-(
-    id      int primary key auto_increment NOT NULL,
-    user_id int references User (id)
-);
-
-create table Customer
-(
-    id             int primary key auto_increment NOT NULL,
-    user_id        int references User (id),
-    credit_card_id int references CreditCard (id)
-);
-
 create table CustomerSubscription
 (
-    id              int primary key auto_increment NOT NULL,
+    id              int primary key auto_increment not null,
     start_date      date,
     end_date        date,
     subscription_id int references Subscription (id),
-    customer_id     int references Customer (id)
+    customer_id     int references User (id)
+);
+
+create table MovieDVD
+(
+    id               int primary key auto_increment not null,
+    movie_id         int references Movie (id),
+    movie_dvd_status enum ('rented', 'available')   not null
 );
 
 create table Rentals
 (
-    id            int primary key auto_increment NOT NULL,
+    id            int primary key auto_increment not null,
     borrowed_date date,
     return_date   date,
     user_id       int references User (id),
-    movie_id      int references Movie (id)
+    movie_dvd_id  int references MovieDVD (id)
 );
 
 create table SubscriptionPayment
 (
-    id                       int primary key auto_increment NOT NULL,
+    id                       int primary key auto_increment not null,
     payment_date             date,
     payment_amount           double,
     payment_month            int,
@@ -179,23 +173,20 @@ create table SubscriptionPayment
     customer_subscription_id int references CustomerSubscription (id)
 );
 
-create table MovieDVD
-(
-    id       int primary key auto_increment NOT NULL,
-    movie_id int references Movie (id)
-);
-
 create table Trailer
 (
-    id       int primary key auto_increment NOT NULL,
+    id       int primary key auto_increment not null,
     link     text,
     movie_id int references Movie (id)
 );
 
+-- create functions
+-- TODO: split procedure InsertMovie into multiple functions
+
 -- create procedures
 -- TODO: use InsertMovie procedure to insert movies from xml in MovieDao
 delimiter //
-create procedure InsertMovie (
+create procedure InsertMovie(
     in id int,
     in title varchar(100),
     in listOfCountries text,
@@ -210,41 +201,53 @@ create procedure InsertMovie (
     in cover text,
     in listOfTrailers text
 )
-    begin
-        declare scriptwriter varchar(100);
-        declare trailer text;
-        declare actor text;
-        declare actor_character_name varchar(100);
-        declare actor_person_id int;
+begin
+    declare scriptwriter varchar(100);
+    declare trailer text;
+    declare actor text;
+    declare actor_character_name varchar(100);
+    declare actor_person_id int;
 
-        insertScriptwriters: while char_length(listOfScriptwriters) > 0 do
+    insertScriptwriters:
+    while char_length(listOfScriptwriters) > 0
+        do
             set scriptwriter = substring_index(listOfScriptwriters, ';', 1);
             insert into Scriptwriter (name, movie_id) values (scriptwriter, id);
             set listOfScriptwriters = substring(listOfScriptwriters, locate(';', listOfScriptwriters));
         end while insertScriptwriters;
 
-        insertTrailers: while char_length(listOfTrailers) > 0 do
+    insertTrailers:
+    while char_length(listOfTrailers) > 0
+        do
             set trailer = substring_index(listOfTrailers, ';', 1);
             insert into Trailer (link, movie_id) values (trailer, id);
             set listOfTrailers = substring(listOfTrailers, locate(';', listOfTrailers));
         end while insertTrailers;
 
-        insertActors: while char_length(listOfActors) > 0 do
+    insertActors:
+    while char_length(listOfActors) > 0
+        do
             set actor = substring_index(listOfActors, ';', 1);
             set actor_character_name = substring_index(actor, ',', 1);
             set actor_person_id = substring_index(actor, ',', 2);
 
             insert into PersonRolePlayed (character_name, person_id, movie_id)
-                values (actor_character_name, actor_person_id, id);
+            values (actor_character_name, actor_person_id, id);
 
             set listOfActors = substring(listOfActors, locate(';', listOfActors));
         end while insertActors;
 
-        -- TODO: insert movieGenres
+    -- TODO: insert movieGenres
 
-        -- TODO: insert movieProductionCountries
+    -- TODO: insert movieProductionCountries
 
-        -- TODO: finally insert the movie
+    -- TODO: finally insert the movie
 
-    end //
+    -- TODO: generate movie dvds between 1 and 100 for each movie with default status available
+
+end //
 delimiter ;
+
+-- triggers
+-- TODO: create trigger for user insert age check > 18
+-- TODO: create trigger check for movie dvd is available before rental

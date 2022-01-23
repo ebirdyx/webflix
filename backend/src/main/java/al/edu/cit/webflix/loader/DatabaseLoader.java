@@ -1,8 +1,8 @@
 package al.edu.cit.webflix.loader;
 
-import al.edu.cit.webflix.actors.Actor;
-import al.edu.cit.webflix.actors.ActorBuilder;
-import al.edu.cit.webflix.actors.ActorDao;
+import al.edu.cit.webflix.movies.actors.Actor;
+import al.edu.cit.webflix.movies.actors.ActorBuilder;
+import al.edu.cit.webflix.movies.actors.ActorDao;
 import al.edu.cit.webflix.countries.Country;
 import al.edu.cit.webflix.countries.CountryBuilder;
 import al.edu.cit.webflix.countries.CountryDao;
@@ -12,6 +12,7 @@ import al.edu.cit.webflix.genres.GenreDao;
 import al.edu.cit.webflix.languages.Language;
 import al.edu.cit.webflix.languages.LanguageBuilder;
 import al.edu.cit.webflix.languages.LanguageDao;
+import al.edu.cit.webflix.loader.models.clients.XMLClients;
 import al.edu.cit.webflix.loader.models.movies.XMLMovies;
 import al.edu.cit.webflix.loader.models.people.XMLPeople;
 import al.edu.cit.webflix.movies.Movie;
@@ -26,17 +27,37 @@ import al.edu.cit.webflix.movies.genres.MovieGenreDao;
 import al.edu.cit.webflix.people.Person;
 import al.edu.cit.webflix.people.PersonBuilder;
 import al.edu.cit.webflix.people.PersonDao;
-import al.edu.cit.webflix.scriptwriter.Scriptwriter;
-import al.edu.cit.webflix.scriptwriter.ScriptwriterBuilder;
-import al.edu.cit.webflix.scriptwriter.ScriptwriterDao;
-import al.edu.cit.webflix.trailers.Trailer;
-import al.edu.cit.webflix.trailers.TrailerBuilder;
-import al.edu.cit.webflix.trailers.TrailerDao;
+import al.edu.cit.webflix.movies.scriptwriter.Scriptwriter;
+import al.edu.cit.webflix.movies.scriptwriter.ScriptwriterBuilder;
+import al.edu.cit.webflix.movies.scriptwriter.ScriptwriterDao;
+import al.edu.cit.webflix.movies.trailers.Trailer;
+import al.edu.cit.webflix.movies.trailers.TrailerBuilder;
+import al.edu.cit.webflix.movies.trailers.TrailerDao;
+import al.edu.cit.webflix.users.User;
+import al.edu.cit.webflix.users.UserBuilder;
+import al.edu.cit.webflix.users.UserDao;
+import al.edu.cit.webflix.users.UserType;
+import al.edu.cit.webflix.users.addresses.Address;
+import al.edu.cit.webflix.users.addresses.AddressBuilder;
+import al.edu.cit.webflix.users.addresses.AddressDao;
+import al.edu.cit.webflix.users.creditcards.CreditCard;
+import al.edu.cit.webflix.users.creditcards.CreditCardBuilder;
+import al.edu.cit.webflix.users.creditcards.CreditCardDao;
+import al.edu.cit.webflix.users.creditcards.CreditCardType;
+import al.edu.cit.webflix.users.customersubscriptions.CustomerSubscription;
+import al.edu.cit.webflix.users.customersubscriptions.CustomerSubscriptionBuilder;
+import al.edu.cit.webflix.users.customersubscriptions.CustomerSubscriptionDao;
+import al.edu.cit.webflix.users.subscriptions.Subscription;
+import al.edu.cit.webflix.users.subscriptions.SubscriptionBuilder;
+import al.edu.cit.webflix.users.subscriptions.SubscriptionDao;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -44,7 +65,7 @@ import static al.edu.cit.webflix.common.Utils.deserializeXmlObject;
 import static al.edu.cit.webflix.common.Utils.readFileFromResources;
 
 @Component
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 class DatabaseLoader implements CommandLineRunner {
 
     private PersonDao personDao;
@@ -57,6 +78,11 @@ class DatabaseLoader implements CommandLineRunner {
     private ActorDao actorDao;
     private MovieGenreDao movieGenreDao;
     private MovieProductionCountryDao movieProductionCountryDao;
+    private UserDao userDao;
+    private AddressDao addressDao;
+    private CreditCardDao creditCardDao;
+    private SubscriptionDao subscriptionDao;
+    private CustomerSubscriptionDao customerSubscriptionDao;
 
     public void loadPeople() throws IOException {
         String xml = readFileFromResources("data/people_latin1.xml");
@@ -202,7 +228,6 @@ class DatabaseLoader implements CommandLineRunner {
                             .setSynopsis(xmlMovie.synopsis)
                             .setCover(xmlMovie.cover)
                             .setDirector(personDao.get(xmlMovie.director.id != 0 ? xmlMovie.director.id : 1))
-//                            .setDirectorId(xmlMovie.director.id != 0 ? xmlMovie.director.id : 1)
                             .setLanguage(languageDao.findByName(Objects.requireNonNullElse(xmlMovie.language, "English")))
                             .build();
 
@@ -218,6 +243,115 @@ class DatabaseLoader implements CommandLineRunner {
         loadMovieProductionCountries(movieProductionCountries);
     }
 
+    private void createAdminUser() {
+        Address address = new AddressBuilder()
+                .setId(1)
+                .build();
+
+        addressDao.insert(address);
+
+        CreditCard creditCard = new CreditCardBuilder()
+                .setType(CreditCardType.MasterCard)
+                .setId(1)
+                .build();
+
+        creditCardDao.insert(creditCard);
+
+        User user = new UserBuilder()
+                .setType(UserType.Employee)
+                .setUsername("admin")
+                .setPassword("admin")
+                .setAddress(address)
+                .setCreditCard(creditCard)
+                .build();
+
+        userDao.insert(user);
+    }
+
+    public void loadSubscriptions() {
+        Subscription beginner = new SubscriptionBuilder()
+                .setName("Beginner")
+                .setCode("D")
+                .setCost(5)
+                .setMaxRentals(1)
+                .setMaxDuration(10)
+                .build();
+
+        subscriptionDao.insert(beginner);
+
+        Subscription intermediate = new SubscriptionBuilder()
+                .setName("Intermediate")
+                .setCode("I")
+                .setCost(10)
+                .setMaxRentals(5)
+                .setMaxDuration(30)
+                .build();
+
+        subscriptionDao.insert(intermediate);
+
+        Subscription advanced = new SubscriptionBuilder()
+                .setName("Advanced")
+                .setCode("AT")
+                .setCost(15)
+                .setMaxRentals(10)
+                .setMaxDuration(365)
+                .build();
+
+        subscriptionDao.insert(advanced);
+    }
+
+    private void loadUsers() throws IOException {
+        createAdminUser();
+        loadSubscriptions();
+
+        String xml = readFileFromResources("data/clients_latin1.xml");
+        XMLClients xmlClients = (XMLClients) deserializeXmlObject(xml, XMLClients.class);
+
+        xmlClients.clients
+                .forEach(xmlClient -> {
+                    Address address = new AddressBuilder()
+                            .setId(xmlClient.index)
+                            .setCivicNumber(xmlClient.getCivicNo())
+                            .setStreet(xmlClient.getStreet())
+                            .setProvince(xmlClient.province)
+                            .setPostalCode(xmlClient.postalCode)
+                            .build();
+
+                    addressDao.insert(address);
+
+                    CreditCard creditCard = new CreditCardBuilder()
+                            .setId(xmlClient.index)
+                            .setNumber(xmlClient.creditCard.cardNumber)
+                            .setType(CreditCardType.valueOf(xmlClient.creditCard.cardType))
+                            .setExpirationMonth(xmlClient.creditCard.expirationMonth)
+                            .setExpirationYear(xmlClient.creditCard.expirationYear)
+                            .build();
+
+                    creditCardDao.insert(creditCard);
+
+                    User user = new UserBuilder()
+                            .setType(UserType.Customer)
+                            .setUsername(xmlClient.email)
+                            .setPassword(xmlClient.password)
+                            .setFirstName(xmlClient.firstName)
+                            .setLastName(xmlClient.lastName)
+                            .setPhoneNumber(xmlClient.phone)
+                            .setAddress(address)
+                            .setCreditCard(creditCard)
+                            .build();
+
+                    userDao.insert(user);
+
+                    CustomerSubscription customerSubscription = new CustomerSubscriptionBuilder()
+                            .setCustomerId(user.getId())
+                            .setSubscription(subscriptionDao.getByCode(xmlClient.subscription))
+                            .setStartDate(new Date(Calendar.getInstance().getTime().getTime()))
+                            .build();
+
+                    customerSubscriptionDao.insert(customerSubscription);
+                });
+    }
+
     @Override
     public void run(String... args) throws Exception {
         if (personDao.count() == 0)
@@ -225,5 +359,8 @@ class DatabaseLoader implements CommandLineRunner {
 
         if (movieDao.count() == 0)
             loadMovies();
+
+        if (userDao.count() == 0)
+            loadUsers();
     }
 }

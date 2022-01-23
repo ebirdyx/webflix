@@ -1,15 +1,13 @@
 package al.edu.cit.webflix.movies;
 
-import al.edu.cit.webflix.actors.ActorDao;
+import al.edu.cit.webflix.movies.actors.ActorDao;
 import al.edu.cit.webflix.common.IRepository;
-import al.edu.cit.webflix.genres.Genre;
-import al.edu.cit.webflix.genres.GenreDao;
 import al.edu.cit.webflix.languages.LanguageDao;
 import al.edu.cit.webflix.movies.countries.MovieProductionCountryDao;
 import al.edu.cit.webflix.movies.genres.MovieGenreDao;
 import al.edu.cit.webflix.people.PersonDao;
-import al.edu.cit.webflix.scriptwriter.ScriptwriterDao;
-import al.edu.cit.webflix.trailers.TrailerDao;
+import al.edu.cit.webflix.movies.scriptwriter.ScriptwriterDao;
+import al.edu.cit.webflix.movies.trailers.TrailerDao;
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
@@ -30,7 +28,6 @@ public class MovieDao implements IRepository<Movie> {
     private MovieGenreDao movieGenreDao;
     private ScriptwriterDao scriptwriterDao;
 
-    // Don't use directly, use getMapper instead (Singleton)
     private final MovieRowMapper _mapper = new MovieRowMapper(
             languageDao,
             personDao,
@@ -40,21 +37,6 @@ public class MovieDao implements IRepository<Movie> {
             movieGenreDao,
             scriptwriterDao
     );
-
-//    private MovieRowMapper getMapper() {
-//        if (_mapper == null)
-//            _mapper = new MovieRowMapper(
-//                    languageDao,
-//                    personDao,
-//                    actorDao,
-//                    trailerDao,
-//                    movieProductionCountryDao,
-//                    movieGenreDao,
-//                    scriptwriterDao
-//            );
-//
-//        return _mapper;
-//    }
 
     private static final int BATCH_SIZE = 500;
 

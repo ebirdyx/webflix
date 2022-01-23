@@ -1,9 +1,19 @@
 package al.edu.cit.webflix.loader.models.clients;
 
+import java.util.Arrays;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 public class XMLClient {
+    public static int count = 2;
+
+    public int index;
+
+    public XMLClient() {
+        index = count++;
+    }
+
     @JacksonXmlProperty(isAttribute = true)
     public int id;
 
@@ -35,4 +45,14 @@ public class XMLClient {
 
     @JsonProperty("package")
     public String subscription;
+
+    public int getCivicNo() {
+        return Integer.parseInt(address.split(" ")[0]);
+    }
+
+    public String getStreet() {
+        String[] parts = address.split(" ");
+        String[] streetParts = Arrays.copyOfRange(parts, 1, parts.length);
+        return String.join(" ", streetParts);
+    }
 }
