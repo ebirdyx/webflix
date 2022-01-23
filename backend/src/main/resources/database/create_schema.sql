@@ -193,6 +193,7 @@ create table Trailer
 );
 
 -- create procedures
+-- TODO: use InsertMovie procedure to insert movies from xml in MovieDao
 delimiter //
 create procedure InsertMovie (
     in id int,
@@ -238,5 +239,12 @@ create procedure InsertMovie (
 
             set listOfActors = substring(listOfActors, locate(';', listOfActors));
         end while insertActors;
+
+        -- TODO: insert movieGenres
+
+        -- TODO: insert movieProductionCountries
+
+        -- TODO: finally insert the movie
+
     end //
 delimiter ;
