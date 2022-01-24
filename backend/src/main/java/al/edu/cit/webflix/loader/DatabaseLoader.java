@@ -330,6 +330,7 @@ class DatabaseLoader implements CommandLineRunner {
                     creditCardDao.insert(creditCard);
 
                     User user = new UserBuilder()
+                            .setId(xmlClient.id)
                             .setType(UserType.Customer)
                             .setUsername(xmlClient.email)
                             .setPassword(xmlClient.password)
@@ -340,7 +341,7 @@ class DatabaseLoader implements CommandLineRunner {
                             .setCreditCard(creditCard)
                             .build();
 
-                    userDao.insert(user);
+                    userDao.insertWithId(user);
 
                     CustomerSubscription customerSubscription = new CustomerSubscriptionBuilder()
                             .setCustomerId(user.getId())

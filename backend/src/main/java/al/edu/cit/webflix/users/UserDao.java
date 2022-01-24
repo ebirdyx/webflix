@@ -33,6 +33,10 @@ public class UserDao implements IRepository<User> {
             "insert into User " +
             "(user_type, username, password, first_name, last_name, phone_no, address_id, credit_card_id) " +
             "values(?, ?, ?, ?, ?, ?, ?, ?);";
+    private static final String INSERT_QUERY_WITH_ID =
+            "insert into User " +
+                    "(id, user_type, username, password, first_name, last_name, phone_no, address_id, credit_card_id) " +
+                    "values(?, ?, ?, ?, ?, ?, ?, ?, ?);";
     private static final String UPDATE_QUERY =
             "update User set " +
             "user_type = ?, username = ?, password = ?, first_name = ?, last_name = ?, phone_no = ?, address_id = ?, credit_card_id = ? " +
@@ -68,6 +72,19 @@ public class UserDao implements IRepository<User> {
     @Override
     public void insert(User newItem) {
         jdbc.update(INSERT_QUERY,
+                newItem.getUserType().toString(),
+                newItem.getUsername(),
+                hashPassword(newItem.getPasswordHash()),
+                newItem.getFirstName(),
+                newItem.getLastName(),
+                newItem.getPhoneNumber(),
+                newItem.getAddress().getId(),
+                newItem.getCreditCard().getId());
+    }
+
+    public void insertWithId(User newItem) {
+        jdbc.update(INSERT_QUERY_WITH_ID,
+                newItem.getId(),
                 newItem.getUserType().toString(),
                 newItem.getUsername(),
                 hashPassword(newItem.getPasswordHash()),
