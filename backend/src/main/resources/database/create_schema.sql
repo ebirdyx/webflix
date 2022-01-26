@@ -239,8 +239,8 @@ begin
     -- TODO: insert movieGenres {UNFINISHED}
     create procedure InsertMovieGenres(
         in id int,
-        in movie_id
-        in genre_id
+        in movie_title varchar(100),
+        in movie_genre varchar(50),
     )
 
     -- TODO: insert movieProductionCountries
