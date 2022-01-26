@@ -236,8 +236,12 @@ begin
 
             set listOfActors = substring(listOfActors, locate(';', listOfActors));
         end while insertActors;
-
-    -- TODO: insert movieGenres
+    -- TODO: insert movieGenres {UNFINISHED}
+    create procedure InsertMovieGenres(
+        in id int,
+        in movie_id
+        in genre_id
+    )
 
     -- TODO: insert movieProductionCountries
 
@@ -250,4 +254,8 @@ delimiter ;
 
 -- triggers
 -- TODO: create trigger for user insert age check > 18
--- TODO: create trigger check for movie dvd is available before rental
+-- TODO: create trigger check for movie dvd is available before rental {UNFINISHIED}
+CREATE TRIGGER TR_movies_status ON rental
+BEFORE InsertMovie AS
+    SELECT movie_dvd_status FROM MovieDVD
+GO
