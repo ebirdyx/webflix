@@ -256,6 +256,6 @@ delimiter ;
 -- TODO: create trigger for user insert age check > 18
 -- TODO: create trigger check for movie dvd is available before rental {UNFINISHIED}
 CREATE TRIGGER TR_movies_status ON rental
-BEFORE InsertMovie AS
+BEFORE INSERT Rentals AS
     SELECT movie_dvd_status FROM MovieDVD
 GO
