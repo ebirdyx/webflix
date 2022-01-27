@@ -19,6 +19,7 @@ drop table if exists ProductionCountry;
 drop table if exists Scriptwriter;
 drop table if exists Movie;
 drop table if exists Subscription;
+drop function if exists get_user_age_in_years;
 drop procedure if exists p_insert_movie;
 drop trigger if exists t_check_user_age;
 drop trigger if exists t_validate_credit_card;
@@ -184,16 +185,20 @@ create table Trailer
 );
 
 -- create functions
--- TODO: split procedure InsertMovie into multiple functions
+delimiter //
+create function get_user_age_in_years(
+    user_id int
+) return int
+begin
+    declare user_birth_date date;
+    declare user_age int;
+    select birth_date into user_birth_date from User where id = user_id;
+    select TIMESTAMPDIFF(year , user_birth_date, curdate()) into user_age;
+    return user_age;
+end //
+delimiter ;
 
--- create procedures
-
-#     create procedure InsertMovieGenres(
-#         in id int,
-#         in movie_title varchar(100),
-#         in movie_genre varchar(50),
-#     )
-
+-- procedures
 -- TODO: use InsertMovie procedure to insert movies from xml in MovieDao
 delimiter //
 create procedure p_insert_movie(
@@ -258,22 +263,23 @@ end //
 delimiter ;
 
 -- triggers
--- TODO: create trigger for user insert age check > 18
+-- trigger for user insert age check > 18
 delimiter //
 create trigger if not exists t_check_user_age
     before insert on User for each row
     begin
-        declare user_birth_date date;
+        declare user_age int;
 
-        select birth_date into user_birth_date from User where id = NEW.id;
+        select get_user_age_in_years(NEW.id) into user_age;
 
-        if curdate() - user_birth_date < 18 * 365 then
+        if user_age < 18 then
             SIGNAL SQLSTATE '70002'
                 SET MESSAGE_TEXT = 'User age must be greater than 18 years old';
         end if;
     end; //
 delimiter ;
 
+-- trigger for validating credit card expiration date
 delimiter //
 create trigger if not exists t_validate_credit_card
     before insert on CreditCard for each row
@@ -294,7 +300,3 @@ delimiter ;
 
 -- TODO: create trigger check for movie dvd is available before rental
 -- TODO: create trigger check for movie dvd is available before rental {UNFINISHIED}
-# CREATE TRIGGER TR_movies_status ON rental
-# BEFORE INSERT Rentals AS
-#     SELECT movie_dvd_status FROM MovieDVD
-# GO
