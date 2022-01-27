@@ -19,6 +19,7 @@ drop table if exists ProductionCountry;
 drop table if exists Scriptwriter;
 drop table if exists Movie;
 drop table if exists Subscription;
+drop view if exists v_users;
 drop function if exists get_user_age_in_years;
 drop procedure if exists p_insert_movie;
 drop trigger if exists t_check_user_age;
@@ -184,11 +185,20 @@ create table Trailer
     movie_id int references Movie (id)
 );
 
+-- create views
+create view v_users as
+    select u.id, u.user_type, u.username, concat(u.first_name, ', ', u.last_name) as full_name,
+           u.phone_no, u.birth_date, a.civic_no, a.street, a.city, a.province, a.post_code,
+           c.no, c.type, c.expiration_date_month, c.expiration_date_year
+    from User as u inner join Address as a on u.address_id = a.id
+    inner join CreditCard as c on u.credit_card_id = c.id;
+
 -- create functions
+-- calculate user age
 delimiter //
 create function get_user_age_in_years(
     user_id int
-) return int
+) returns int
 begin
     declare user_birth_date date;
     declare user_age int;
