@@ -188,6 +188,13 @@ create table Trailer
 -- create procedures
 -- TODO: use InsertMovie procedure to insert movies from xml in MovieDao
 delimiter //
+
+#     create procedure InsertMovieGenres(
+#         in id int,
+#         in movie_title varchar(100),
+#         in movie_genre varchar(50),
+#     )
+
 create procedure p_insert_movie(
     in id int,
     in title varchar(100),
@@ -239,11 +246,6 @@ begin
             set listOfActors = substring(listOfActors, locate(';', listOfActors));
         end while insertActors;
     -- TODO: insert movieGenres {UNFINISHED}
-    create procedure InsertMovieGenres(
-        in id int,
-        in movie_title varchar(100),
-        in movie_genre varchar(50),
-    )
 
     -- TODO: insert movieProductionCountries
 
@@ -263,7 +265,7 @@ delimiter ;
 #     end;
 -- TODO: create trigger check for movie dvd is available before rental
 -- TODO: create trigger check for movie dvd is available before rental {UNFINISHIED}
-CREATE TRIGGER TR_movies_status ON rental
-BEFORE INSERT Rentals AS
-    SELECT movie_dvd_status FROM MovieDVD
-GO
+# CREATE TRIGGER TR_movies_status ON rental
+# BEFORE INSERT Rentals AS
+#     SELECT movie_dvd_status FROM MovieDVD
+# GO
