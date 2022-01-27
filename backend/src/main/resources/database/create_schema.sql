@@ -272,6 +272,8 @@ begin
 end //
 delimiter ;
 
+-- TODO: create procedure to create a rental (should create a new row in rental and change dvd status to rented)
+
 -- triggers
 -- trigger for user insert age check > 18
 delimiter //
@@ -309,4 +311,3 @@ delimiter ;
 
 
 -- TODO: create trigger check for movie dvd is available before rental
--- TODO: create trigger check for movie dvd is available before rental {UNFINISHIED}
