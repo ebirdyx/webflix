@@ -186,8 +186,6 @@ create table Trailer
 -- TODO: split procedure InsertMovie into multiple functions
 
 -- create procedures
--- TODO: use InsertMovie procedure to insert movies from xml in MovieDao
-delimiter //
 
 #     create procedure InsertMovieGenres(
 #         in id int,
@@ -195,6 +193,8 @@ delimiter //
 #         in movie_genre varchar(50),
 #     )
 
+-- TODO: use InsertMovie procedure to insert movies from xml in MovieDao
+delimiter //
 create procedure p_insert_movie(
     in id int,
     in title varchar(100),
@@ -258,11 +258,20 @@ delimiter ;
 
 -- triggers
 -- TODO: create trigger for user insert age check > 18
-# create trigger if not exists t_check_user_age
-#     before insert on User for each row
-#     begin
-#
-#     end;
+delimiter //
+create trigger if not exists t_check_user_age
+    before insert on User for each row
+    begin
+        declare user_birth_date date;
+
+        select birth_date into user_birth_date from User where id = NEW.id;
+
+        if curdate() - user_birth_date < 18 * 365 then
+            SIGNAL SQLSTATE '70002'
+                SET MESSAGE_TEXT = 'User age must be greater than 18 years old';
+        end if;
+    end; //
+delimiter ;
 -- TODO: create trigger check for movie dvd is available before rental
 -- TODO: create trigger check for movie dvd is available before rental {UNFINISHIED}
 # CREATE TRIGGER TR_movies_status ON rental
