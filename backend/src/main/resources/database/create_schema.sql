@@ -21,6 +21,7 @@ drop table if exists Movie;
 drop table if exists Subscription;
 drop procedure if exists p_insert_movie;
 drop trigger if exists t_check_user_age;
+drop trigger if exists t_validate_credit_card;
 
 set foreign_key_checks = 1;
 
@@ -272,6 +273,25 @@ create trigger if not exists t_check_user_age
         end if;
     end; //
 delimiter ;
+
+delimiter //
+create trigger if not exists t_validate_credit_card
+    before insert on CreditCard for each row
+begin
+    declare exp_month int;
+    declare exp_year int;
+
+    select expiration_date_month into exp_month from CreditCard where id = NEW.id;
+    select expiration_date_year into exp_year from CreditCard where id = NEW.id;
+
+    if !(exp_month > month(curdate()) and exp_year > year(curdate())) then
+        SIGNAL SQLSTATE '70002'
+            SET MESSAGE_TEXT = 'This credit card is already expired and cannot be added';
+    end if;
+end; //
+delimiter ;
+
+
 -- TODO: create trigger check for movie dvd is available before rental
 -- TODO: create trigger check for movie dvd is available before rental {UNFINISHIED}
 # CREATE TRIGGER TR_movies_status ON rental
