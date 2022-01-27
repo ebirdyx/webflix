@@ -338,6 +338,7 @@ class DatabaseLoader implements CommandLineRunner {
                             .setLastName(xmlClient.lastName)
                             .setPhoneNumber(xmlClient.phone)
                             .setAddress(address)
+                            .setDateOfBirth(xmlClient.dob)
                             .setCreditCard(creditCard)
                             .build();
 

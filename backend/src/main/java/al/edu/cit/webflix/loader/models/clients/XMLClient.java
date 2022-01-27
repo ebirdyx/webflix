@@ -1,5 +1,6 @@
 package al.edu.cit.webflix.loader.models.clients;
 
+import java.sql.Date;
 import java.util.Arrays;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,7 +28,7 @@ public class XMLClient {
 
     public String phone;
 
-    public String dob;
+    public Date dob;
 
     public String address;
 

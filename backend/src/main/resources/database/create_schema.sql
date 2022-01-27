@@ -19,7 +19,8 @@ drop table if exists ProductionCountry;
 drop table if exists Scriptwriter;
 drop table if exists Movie;
 drop table if exists Subscription;
-drop procedure if exists InsertMovie;
+drop procedure if exists p_insert_movie;
+drop trigger if exists t_check_user_age;
 
 set foreign_key_checks = 1;
 
@@ -53,6 +54,7 @@ create table User
     first_name     varchar(100),
     last_name      varchar(100),
     phone_no       varchar(100),
+    birth_date     date,
     address_id     int references Address (id),
     credit_card_id int references CreditCard (id)
 );
@@ -186,7 +188,7 @@ create table Trailer
 -- create procedures
 -- TODO: use InsertMovie procedure to insert movies from xml in MovieDao
 delimiter //
-create procedure InsertMovie(
+create procedure p_insert_movie(
     in id int,
     in title varchar(100),
     in listOfCountries text,
@@ -250,4 +252,9 @@ delimiter ;
 
 -- triggers
 -- TODO: create trigger for user insert age check > 18
+# create trigger if not exists t_check_user_age
+#     before insert on User for each row
+#     begin
+#
+#     end;
 -- TODO: create trigger check for movie dvd is available before rental

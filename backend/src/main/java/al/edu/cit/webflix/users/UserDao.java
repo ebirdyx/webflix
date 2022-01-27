@@ -31,15 +31,15 @@ public class UserDao implements IRepository<User> {
     private static final String COUNT_QUERY = "select * from User;";
     private static final String INSERT_QUERY =
             "insert into User " +
-            "(user_type, username, password, first_name, last_name, phone_no, address_id, credit_card_id) " +
-            "values(?, ?, ?, ?, ?, ?, ?, ?);";
+            "(user_type, username, password, first_name, last_name, phone_no, birth_date, address_id, credit_card_id) " +
+            "values(?, ?, ?, ?, ?, ?, ?, ?, ?);";
     private static final String INSERT_QUERY_WITH_ID =
             "insert into User " +
-                    "(id, user_type, username, password, first_name, last_name, phone_no, address_id, credit_card_id) " +
-                    "values(?, ?, ?, ?, ?, ?, ?, ?, ?);";
+                    "(id, user_type, username, password, first_name, last_name, phone_no, birth_date, address_id, credit_card_id) " +
+                    "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
     private static final String UPDATE_QUERY =
             "update User set " +
-            "user_type = ?, username = ?, password = ?, first_name = ?, last_name = ?, phone_no = ?, address_id = ?, credit_card_id = ? " +
+            "user_type = ?, username = ?, password = ?, first_name = ?, last_name = ?, phone_no = ?, birth_date = ?, address_id = ?, credit_card_id = ? " +
             "where id = ?;";
     private static final String DELETE_QUERY = "delete from User where id = ?;";
 
@@ -78,6 +78,7 @@ public class UserDao implements IRepository<User> {
                 newItem.getFirstName(),
                 newItem.getLastName(),
                 newItem.getPhoneNumber(),
+                newItem.getBirthDate(),
                 newItem.getAddress().getId(),
                 newItem.getCreditCard().getId());
     }
@@ -91,6 +92,7 @@ public class UserDao implements IRepository<User> {
                 newItem.getFirstName(),
                 newItem.getLastName(),
                 newItem.getPhoneNumber(),
+                newItem.getBirthDate(),
                 newItem.getAddress().getId(),
                 newItem.getCreditCard().getId());
     }
@@ -103,8 +105,9 @@ public class UserDao implements IRepository<User> {
             ps.setString(4, user.getFirstName());
             ps.setString(5, user.getLastName());
             ps.setString(6, user.getPhoneNumber());
-            ps.setInt(7, user.getAddress().getId());
-            ps.setInt(8, user.getCreditCard().getId());
+            ps.setDate(7, user.getBirthDate());
+            ps.setInt(8, user.getAddress().getId());
+            ps.setInt(9, user.getCreditCard().getId());
         };
     }
 
@@ -128,8 +131,9 @@ public class UserDao implements IRepository<User> {
             ps.setString(5, user.getLastName());
             ps.setString(6, user.getPhoneNumber());
             ps.setInt(7, user.getAddress().getId());
-            ps.setInt(8, user.getCreditCard().getId());
-            ps.setInt(9, user.getId());
+            ps.setDate(8, user.getBirthDate());
+            ps.setInt(9, user.getCreditCard().getId());
+            ps.setInt(10, user.getId());
         };
     }
 

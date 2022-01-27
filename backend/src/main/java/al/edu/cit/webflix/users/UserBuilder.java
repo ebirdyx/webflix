@@ -6,6 +6,8 @@ import al.edu.cit.webflix.users.creditcards.CreditCard;
 import al.edu.cit.webflix.users.customersubscriptions.CustomerSubscription;
 import lombok.AllArgsConstructor;
 
+import java.sql.Date;
+
 @AllArgsConstructor
 public class UserBuilder {
     private final User user = new User();
@@ -47,6 +49,11 @@ public class UserBuilder {
 
     public UserBuilder setAddress(Address address) {
         user.setAddress(address);
+        return this;
+    }
+
+    public UserBuilder setDateOfBirth(Date dateOfBirth) {
+        user.setBirthDate(dateOfBirth);
         return this;
     }
 

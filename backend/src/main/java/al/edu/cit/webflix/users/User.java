@@ -5,6 +5,7 @@ import al.edu.cit.webflix.users.creditcards.CreditCard;
 import al.edu.cit.webflix.users.customersubscriptions.CustomerSubscription;
 import lombok.Data;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,8 @@ public class User {
     private String phoneNumber;
 
     private Address address;
+
+    private Date birthDate;
 
     private CreditCard creditCard;
 
