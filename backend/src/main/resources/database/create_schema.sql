@@ -210,9 +210,6 @@ from User as u
          inner join Address as a on u.address_id = a.id
          inner join CreditCard as c on u.credit_card_id = c.id;
 
-
-delimiter //
-
 create view v_movie_details as
 select m.title,
        m.publishing_year,
@@ -226,25 +223,20 @@ select m.title,
 
 from Movie as m
          inner join People as p on m.director_id = p.id
-
          inner join MovieGenre as mg on m.id = mg.movie_id
          inner join Genre as g on mg.genre_id = g.id
          inner join Scriptwriter as s on m.id = s.movie_id
          inner join Trailer as t on m.id = t.movie_id;
 
-
--- TODO create view movie rentals per user
-delimiter //
-
 create view v_my_rentals as
-     select u.username as user,
-            m.title as title,
-            r.borrowed_date
+select u.username as user,
+       m.title    as title,
+       r.borrowed_date
+from Rentals as r
+         inner join MovieDVD as md on r.id = md.id
+         inner join Movie as m on md.movie_id = m.id
+         inner join User u on r.user_id = u.id;
 
-      from Rentals as r
-      inner join MovieDVD as md on r.id = md.id
-      inner join Movie as m on md.movie_id = m.id
-      inner join User u on r.user_id = u.id;
 -- TODO create view actor played in movies
 
 -- create functions
@@ -252,6 +244,7 @@ create view v_my_rentals as
 # create function get_
 
 -- calculate user age
+delimiter //
 create function get_user_age_in_years(
     user_id int
 ) returns int
@@ -373,7 +366,9 @@ delimiter ;
 
 delimiter //
 create trigger if not exists t_generate_movie_dvd
-    after insert on Movie for each row
+    after insert
+    on Movie
+    for each row
 begin
     declare movie_id int;
     declare random_dvds int;
@@ -390,7 +385,8 @@ begin
             insert into MovieDVD (movie_id, movie_dvd_status) values (movie_id, 'available');
             set dvd_index = dvd_index + 1;
         end while insertMovieDVDs;
-end; //
+end;
+//
 delimiter ;
 
 -- TODO: create trigger check if the movie dvd is available before rental
@@ -405,7 +401,7 @@ begin
 
     select movie_dvd_status into movie_dvd_status from MovieDVD where MovieDVD.id = NEW.movie_dvd_id;
 
-    if strcmp(movie_dvd_status , 'rented') then
+    if strcmp(movie_dvd_status, 'rented') then
         SIGNAL SQLSTATE '70002'
             SET MESSAGE_TEXT = 'Movie dvd is not available';
     end if;
