@@ -2,9 +2,7 @@ import React, {useContext, useState} from "react";
 import {Button, Card, Col, Modal} from "react-bootstrap";
 import {Movie} from "../api/types";
 import AuthContext from '../store/auth_context';
-import UserApi from "../api/UserApi";
 import MovieApi from "../api/MovieApi";
-import auth_context from "../store/auth_context";
 
 interface Props {
   movie: Movie;
