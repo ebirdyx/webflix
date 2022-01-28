@@ -24,6 +24,7 @@ drop function if exists get_user_age_in_years;
 drop procedure if exists p_insert_movie;
 drop trigger if exists t_check_user_age;
 drop trigger if exists t_validate_credit_card;
+drop trigger if exists t_generate_movie_dvd;
 
 set foreign_key_checks = 1;
 
@@ -309,5 +310,26 @@ begin
 end; //
 delimiter ;
 
+delimiter //
+create trigger if not exists t_generate_movie_dvd
+    after insert on Movie for each row
+begin
+    declare movie_id int;
+    declare random_dvds int;
+    declare dvd_index int;
+
+    select id into movie_id from Movie where id = NEW.id;
+    select rand() * (100 - 1) + 1 into random_dvds;
+
+    set dvd_index = 1;
+
+    insertMovieDVDs:
+    while dvd_index <= random_dvds
+        do
+            insert into MovieDVD (movie_id, movie_dvd_status) values (movie_id, 'available');
+            set dvd_index = dvd_index + 1;
+        end while insertMovieDVDs;
+end; //
+delimiter ;
 
 -- TODO: create trigger check for movie dvd is available before rental
