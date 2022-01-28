@@ -368,9 +368,9 @@ create trigger if not exists t_check_movie_dvd_availability
 begin
     declare movie_dvd_status enum ('rented','available');
 
-    select movie_dvd_status into movie_dvd_status from MovieDVD where MovieDVD.id = NEW.id;
+    select movie_dvd_status into movie_dvd_status from MovieDVD where MovieDVD.id = NEW.movie_dvd_id;
 
-    if !(movie_dvd_status = 'available') then
+    if strcmp(movie_dvd_status , 'rented') then
         SIGNAL SQLSTATE '70002'
             SET MESSAGE_TEXT = 'Movie dvd is not available';
     end if;
