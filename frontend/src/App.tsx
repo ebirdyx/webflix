@@ -9,7 +9,7 @@ function App() {
   const authContext = useContext(AuthContext);
 
   return (
-    <div className="bg-black bg-opacity-10 vh-100">
+    <div className="bg-black bg-opacity-10 vh-100 overflow-auto">
       <BrowserRouter>
         <div className="mb-5">
           <Navigation />

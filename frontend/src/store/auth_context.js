@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from 'react';
 
 const AuthContext = React.createContext({
-  user: {},
+  user: {
+    id: 0,
+    username: '',
+    firstName: '',
+    lastName: '',
+  },
   isLoggedIn: false,
   login: (user) => {},
   logout: () => {},
 });
 
 const retrieveStoredUser = () => {
-  const storedUser = localStorage.getItem('user');
+  let storedUser = localStorage.getItem('user');
+
+  if (storedUser !== null)
+    storedUser = JSON.parse(storedUser);
 
   return {
     user: storedUser
@@ -17,7 +25,7 @@ const retrieveStoredUser = () => {
 
 export const AuthContextProvider = (props) => {
   const storedUser = retrieveStoredUser();
-  const initialUser = storedUser.user ? storedUser : undefined;
+  const initialUser = storedUser.user ? storedUser.user : undefined;
   const [user, setUser] = useState(initialUser);
 
   const userIsLoggedIn = !!user;
@@ -29,7 +37,7 @@ export const AuthContextProvider = (props) => {
 
   const loginHandler = (user) => {
     setUser(user);
-    localStorage.setItem('user', user);
+    localStorage.setItem('user', JSON.stringify(user));
   };
 
   const contextValue = {

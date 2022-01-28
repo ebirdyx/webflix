@@ -23,6 +23,7 @@ drop view if exists v_users;
 drop view if exists v_movie_details;
 drop view if exists v_my_rentals;
 drop function if exists get_user_age_in_years;
+drop procedure if exists p_rent_movie;
 drop procedure if exists p_insert_movie;
 drop trigger if exists t_check_user_age;
 drop trigger if exists t_validate_credit_card;
@@ -220,7 +221,6 @@ select m.title,
        p.name as actor,
        s.name as scriptwriter,
        t.link as trailer
-
 from Movie as m
          inner join People as p on m.director_id = p.id
          inner join MovieGenre as mg on m.id = mg.movie_id
@@ -259,6 +259,27 @@ delimiter ;
 
 -- procedures
 -- TODO: use InsertMovie procedure to insert movies from xml in MovieDao
+delimiter //
+create procedure p_rent_movie(
+    in id_user int,
+    in id_movie int
+)
+begin
+    declare id_dvd int;
+
+    start transaction;
+
+    select id into id_dvd from MovieDVD where movie_id = id_movie limit 1;
+
+    insert into Rentals (borrowed_date, return_date, user_id, movie_dvd_id)
+        values (curdate(), null, id_user, id_dvd);
+
+    update MovieDVD set movie_dvd_status = 'rented' where id = id_dvd;
+
+    commit;
+end //
+delimiter ;
+
 delimiter //
 create procedure p_insert_movie(
     in id int,

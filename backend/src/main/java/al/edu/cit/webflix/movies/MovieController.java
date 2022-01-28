@@ -2,10 +2,7 @@ package al.edu.cit.webflix.movies;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,5 +16,11 @@ public class MovieController {
     @GetMapping
     public ResponseEntity<List<Movie>> getMovies() {
         return ResponseEntity.ok(movieService.getMovies());
+    }
+
+    @PostMapping("/rent")
+    public ResponseEntity rentMovie(@RequestBody RentMovieRequest request) {
+        movieService.rentMovie(request.getUserId(), request.getMovieId());
+        return ResponseEntity.ok(null);
     }
 }

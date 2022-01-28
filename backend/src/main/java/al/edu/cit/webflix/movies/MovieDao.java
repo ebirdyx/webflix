@@ -9,11 +9,14 @@ import al.edu.cit.webflix.people.PersonDao;
 import al.edu.cit.webflix.movies.scriptwriter.ScriptwriterDao;
 import al.edu.cit.webflix.movies.trailers.TrailerDao;
 import lombok.AllArgsConstructor;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
-import org.springframework.jdbc.core.RowCountCallbackHandler;
+import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.Repository;
 
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.Arrays;
 import java.util.List;
 
 @Repository
@@ -136,5 +139,22 @@ public class MovieDao implements IRepository<Movie> {
     @Override
     public void delete(int id) {
         jdbc.update(DELETE_QUERY, id);
+    }
+
+    public void rentMovie(int userId, int movieId) {
+        List<SqlParameter> parameters = Arrays.asList(
+                new SqlParameter(Types.INTEGER),
+                new SqlParameter(Types.INTEGER)
+        );
+
+        jdbc.call(new CallableStatementCreator() {
+            @Override
+            public CallableStatement createCallableStatement(Connection con) throws SQLException {
+                CallableStatement cs = con.prepareCall("{call p_rent_movie(?, ?)}");
+                cs.setInt(1, userId);
+                cs.setInt(2, movieId);
+                return cs;
+            }
+        }, parameters);
     }
 }
