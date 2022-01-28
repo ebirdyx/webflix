@@ -8,6 +8,8 @@ drop table if exists PersonRolePlayed;
 drop table if exists CustomerSubscription;
 drop table if exists MovieDVD;
 drop table if exists Trailer;
+drop table if exists Customer;
+drop table if exists Employee;
 drop table if exists SubscriptionPayment;
 drop table if exists MovieGenre;
 drop table if exists Rentals;
@@ -20,10 +22,12 @@ drop table if exists Scriptwriter;
 drop table if exists Movie;
 drop table if exists Subscription;
 drop view if exists v_users;
+drop view if exists v_movie_details;
 drop function if exists get_user_age_in_years;
 drop procedure if exists p_insert_movie;
 drop trigger if exists t_check_user_age;
 drop trigger if exists t_validate_credit_card;
+
 
 set foreign_key_checks = 1;
 
@@ -187,15 +191,53 @@ create table Trailer
 
 -- create views
 create view v_users as
-    select u.id, u.user_type, u.username, concat(u.first_name, ', ', u.last_name) as full_name,
-           u.phone_no, u.birth_date, a.civic_no, a.street, a.city, a.province, a.post_code,
-           c.no, c.type, c.expiration_date_month, c.expiration_date_year
-    from User as u inner join Address as a on u.address_id = a.id
-    inner join CreditCard as c on u.credit_card_id = c.id;
+select u.id,
+       u.user_type,
+       u.username,
+       concat(u.first_name, ', ', u.last_name) as full_name,
+       u.phone_no,
+       u.birth_date,
+       a.civic_no,
+       a.street,
+       a.city,
+       a.province,
+       a.post_code,
+       c.no,
+       c.type,
+       c.expiration_date_month,
+       c.expiration_date_year
+from User as u
+         inner join Address as a on u.address_id = a.id
+         inner join CreditCard as c on u.credit_card_id = c.id;
+
+
+delimiter //
+
+create view v_movie_details as
+select m.title,
+       m.publishing_year,
+       m.duration,
+       m.synopsis,
+       m.cover,
+       g.name as genre,
+       p.name as actor,
+       s.name as scriptwriter,
+       t.link as trailer
+
+from Movie as m
+         inner join People as p on m.director_id = p.id
+
+         inner join MovieGenre as mg on m.id = mg.movie_id
+         inner join Genre as g on mg.genre_id = g.id
+         inner join Scriptwriter as s on m.id = s.movie_id
+         inner join Trailer as t on m.id = t.movie_id;
+
+
+-- TODO create view movie rentals per user
+-- TODO create view actor played in movies
 
 -- create functions
 -- calculate user age
-delimiter //
 create function get_user_age_in_years(
     user_id int
 ) returns int
@@ -203,7 +245,7 @@ begin
     declare user_birth_date date;
     declare user_age int;
     select birth_date into user_birth_date from User where id = user_id;
-    select TIMESTAMPDIFF(year , user_birth_date, curdate()) into user_age;
+    select TIMESTAMPDIFF(year, user_birth_date, curdate()) into user_age;
     return user_age;
 end //
 delimiter ;
@@ -278,23 +320,28 @@ delimiter ;
 -- trigger for user insert age check > 18
 delimiter //
 create trigger if not exists t_check_user_age
-    before insert on User for each row
-    begin
-        declare user_age int;
+    before insert
+    on User
+    for each row
+begin
+    declare user_age int;
 
-        select get_user_age_in_years(NEW.id) into user_age;
+    select get_user_age_in_years(NEW.id) into user_age;
 
-        if user_age < 18 then
-            SIGNAL SQLSTATE '70002'
-                SET MESSAGE_TEXT = 'User age must be greater than 18 years old';
-        end if;
-    end; //
+    if user_age < 18 then
+        SIGNAL SQLSTATE '70002'
+            SET MESSAGE_TEXT = 'User age must be greater than 18 years old';
+    end if;
+end;
+//
 delimiter ;
 
 -- trigger for validating credit card expiration date
 delimiter //
 create trigger if not exists t_validate_credit_card
-    before insert on CreditCard for each row
+    before insert
+    on CreditCard
+    for each row
 begin
     declare exp_month int;
     declare exp_year int;
@@ -306,8 +353,27 @@ begin
         SIGNAL SQLSTATE '70002'
             SET MESSAGE_TEXT = 'This credit card is already expired and cannot be added';
     end if;
-end; //
+end;
+//
 delimiter ;
 
 
--- TODO: create trigger check for movie dvd is available before rental
+-- TODO: create trigger check if the movie dvd is available before rental
+
+delimiter //
+create trigger if not exists t_check_movie_dvd_availability
+    before insert
+    on Rentals
+    for each row
+begin
+    declare movie_dvd_status enum ('rented','available');
+
+    select movie_dvd_status into movie_dvd_status from MovieDVD where MovieDVD.id = NEW.id;
+
+    if !(movie_dvd_status = 'available') then
+        SIGNAL SQLSTATE '70002'
+            SET MESSAGE_TEXT = 'Movie dvd is not available';
+    end if;
+end;
+//
+delimiter ;
