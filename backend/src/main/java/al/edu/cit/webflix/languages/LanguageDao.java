@@ -34,12 +34,12 @@ public class LanguageDao implements IRepository<Language> {
 
     @Override
     public List<Language> getAll() {
-        return jdbc.queryForList(GET_ALL_QUERY, Language.class);
+        return jdbc.query(GET_ALL_QUERY, new LanguageRowMapper());
     }
 
     @Override
     public Language get(int id) {
-        return jdbc.queryForObject(GET_BY_ID_QUERY, Language.class, id);
+        return jdbc.queryForObject(GET_BY_ID_QUERY, new LanguageRowMapper(), id);
     }
 
     public Language findByName(String name) {

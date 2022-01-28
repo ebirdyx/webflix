@@ -28,16 +28,6 @@ public class MovieDao implements IRepository<Movie> {
     private MovieGenreDao movieGenreDao;
     private ScriptwriterDao scriptwriterDao;
 
-    private final MovieRowMapper _mapper = new MovieRowMapper(
-            languageDao,
-            personDao,
-            actorDao,
-            trailerDao,
-            movieProductionCountryDao,
-            movieGenreDao,
-            scriptwriterDao
-    );
-
     private static final int BATCH_SIZE = 500;
 
     private static final String GET_ALL_QUERY = "select * from Movie;";
@@ -66,12 +56,28 @@ public class MovieDao implements IRepository<Movie> {
 
     @Override
     public List<Movie> getAll() {
-        return jdbc.query(GET_ALL_QUERY, _mapper);
+        return jdbc.query(GET_ALL_QUERY, new MovieRowMapper(
+                languageDao,
+                personDao,
+                actorDao,
+                trailerDao,
+                movieProductionCountryDao,
+                movieGenreDao,
+                scriptwriterDao
+        ));
     }
 
     @Override
     public Movie get(int id) {
-        return jdbc.queryForObject(GET_BY_ID_QUERY, _mapper, id);
+        return jdbc.queryForObject(GET_BY_ID_QUERY, new MovieRowMapper(
+                languageDao,
+                personDao,
+                actorDao,
+                trailerDao,
+                movieProductionCountryDao,
+                movieGenreDao,
+                scriptwriterDao
+        ), id);
     }
 
     private ParameterizedPreparedStatementSetter<Movie> prepareInsertStatement() {
