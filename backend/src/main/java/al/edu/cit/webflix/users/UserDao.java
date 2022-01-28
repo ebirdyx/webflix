@@ -28,6 +28,7 @@ public class UserDao implements IRepository<User> {
 
     private static final String GET_ALL_QUERY = "select * from User;";
     private static final String GET_BY_ID_QUERY = "select * from User where id = ?;";
+    private static final String GET_BY_USERNAME_QUERY = "select * from User where username = ?;";
     private static final String COUNT_QUERY = "select * from User;";
     private static final String INSERT_QUERY =
             "insert into User " +
@@ -67,6 +68,13 @@ public class UserDao implements IRepository<User> {
                 GET_BY_ID_QUERY,
                 new UserRowMapper(addressDao, creditCardDao, customerSubscriptionDao),
                 id);
+    }
+
+    public User getByUsername(String username) {
+        return jdbc.queryForObject(
+                GET_BY_USERNAME_QUERY,
+                new UserRowMapper(addressDao, creditCardDao, customerSubscriptionDao),
+                username);
     }
 
     @Override

@@ -1,16 +1,24 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import React, {useContext} from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Navigation from "./components/Navigation";
 import Home from "./components/Home";
+import Login from "./components/Login";
+import AuthContext from './store/auth_context';
 
 function App() {
+  const authContext = useContext(AuthContext);
+
   return (
-    <div>
+    <div className="bg-black bg-opacity-10 vh-100">
       <BrowserRouter>
-        <Navigation />
+        <div className="mb-5">
+          <Navigation />
+        </div>
 
         <Routes>
-          <Route path="/" element={<Home />} />
+          {authContext.isLoggedIn && <Route path="/" element={<Home />} />}
+          <Route path="/login" element={<Login />} />
+          {!authContext.isLoggedIn && <Route path="*" element={<Navigate to="/login" />} />}
         </Routes>
       </BrowserRouter>
     </div>
