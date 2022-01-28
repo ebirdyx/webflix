@@ -258,7 +258,6 @@ end //
 delimiter ;
 
 -- procedures
--- TODO: use InsertMovie procedure to insert movies from xml in MovieDao
 delimiter //
 create procedure p_rent_movie(
     in id_user int,
@@ -280,69 +279,7 @@ begin
 end //
 delimiter ;
 
-delimiter //
-create procedure p_insert_movie(
-    in id int,
-    in title varchar(100),
-    in listOfCountries text,
-    in language varchar(50),
-    in duration int,
-    in synopsis text,
-    in listOfGenres text,
-    in directorId int,
-    in directorName varchar(255),
-    in listOfScriptwriters text,
-    in listOfActors text,
-    in cover text,
-    in listOfTrailers text
-)
-begin
-    declare scriptwriter varchar(100);
-    declare trailer text;
-    declare actor text;
-    declare actor_character_name varchar(100);
-    declare actor_person_id int;
-
-    insertScriptwriters:
-    while char_length(listOfScriptwriters) > 0
-        do
-            set scriptwriter = substring_index(listOfScriptwriters, ';', 1);
-            insert into Scriptwriter (name, movie_id) values (scriptwriter, id);
-            set listOfScriptwriters = substring(listOfScriptwriters, locate(';', listOfScriptwriters));
-        end while insertScriptwriters;
-
-    insertTrailers:
-    while char_length(listOfTrailers) > 0
-        do
-            set trailer = substring_index(listOfTrailers, ';', 1);
-            insert into Trailer (link, movie_id) values (trailer, id);
-            set listOfTrailers = substring(listOfTrailers, locate(';', listOfTrailers));
-        end while insertTrailers;
-
-    insertActors:
-    while char_length(listOfActors) > 0
-        do
-            set actor = substring_index(listOfActors, ';', 1);
-            set actor_character_name = substring_index(actor, ',', 1);
-            set actor_person_id = substring_index(actor, ',', 2);
-
-            insert into PersonRolePlayed (character_name, person_id, movie_id)
-            values (actor_character_name, actor_person_id, id);
-
-            set listOfActors = substring(listOfActors, locate(';', listOfActors));
-        end while insertActors;
-    -- TODO: insert movieGenres {UNFINISHED}
-
-    -- TODO: insert movieProductionCountries
-
-    -- TODO: finally insert the movie
-
-    -- TODO: generate movie dvds between 1 and 100 for each movie with default status available
-
-end //
-delimiter ;
-
--- TODO: create procedure to create a rental (should create a new row in rental and change dvd status to rented)
+-- TODO p_return_movie a user returning borrowed movie
 
 -- triggers
 -- trigger for user insert age check > 18
