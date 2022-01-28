@@ -8,8 +8,6 @@ drop table if exists PersonRolePlayed;
 drop table if exists CustomerSubscription;
 drop table if exists MovieDVD;
 drop table if exists Trailer;
-drop table if exists Customer;
-drop table if exists Employee;
 drop table if exists SubscriptionPayment;
 drop table if exists MovieGenre;
 drop table if exists Rentals;
@@ -23,6 +21,7 @@ drop table if exists Movie;
 drop table if exists Subscription;
 drop view if exists v_users;
 drop view if exists v_movie_details;
+drop view if exists v_my_rentals;
 drop function if exists get_user_age_in_years;
 drop procedure if exists p_insert_movie;
 drop trigger if exists t_check_user_age;
@@ -234,9 +233,23 @@ from Movie as m
 
 
 -- TODO create view movie rentals per user
+delimiter //
+
+create view v_my_rentals as
+     select u.username as user,
+            m.title as title,
+            r.borrowed_date
+
+      from Rentals as r
+      inner join MovieDVD as md on r.id = md.id
+      inner join Movie as m on md.movie_id = m.id
+      inner join User u on r.user_id = u.id;
 -- TODO create view actor played in movies
 
 -- create functions
+
+# create function get_
+
 -- calculate user age
 create function get_user_age_in_years(
     user_id int
