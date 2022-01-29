@@ -241,7 +241,7 @@ from Rentals as r
 
 -- create view actor played in movies
 
-create view actors_per_movie as
+create view v_actors_per_movie as
     select Movie.title as Movie_Title,
     P.name As Acror_Name,
     PRP.character_name as Fictional_Name
