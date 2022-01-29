@@ -281,6 +281,21 @@ delimiter ;
 
 -- TODO p_return_movie a user returning borrowed movie
 
+delimiter //
+create procedure p_return_movie(
+    in id_user int,
+    in id_movie int
+)
+begin
+    declare id_dvd int;
+    start transaction;
+    select id into id_dvd from MovieDVD where movie_id = id_movie limit 1;
+    update MovieDVD set movie_dvd_status = 'available' where id = id_dvd;
+    update Rentals set return_date = curdate() where user_id = id_user;
+    commit;
+end //
+delimiter ;
+
 -- triggers
 -- trigger for user insert age check > 18
 delimiter //
