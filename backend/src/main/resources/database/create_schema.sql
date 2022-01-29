@@ -24,6 +24,7 @@ drop view if exists v_movie_details;
 drop view if exists v_my_rentals;
 drop function if exists get_user_age_in_years;
 drop procedure if exists p_rent_movie;
+drop procedure if exists p_return_movie;
 drop procedure if exists p_insert_movie;
 drop trigger if exists t_check_user_age;
 drop trigger if exists t_validate_credit_card;
