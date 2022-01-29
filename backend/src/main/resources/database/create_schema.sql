@@ -22,6 +22,7 @@ drop table if exists Subscription;
 drop view if exists v_users;
 drop view if exists v_movie_details;
 drop view if exists v_my_rentals;
+drop view if exists actors_per_movie;
 drop function if exists get_user_age_in_years;
 drop procedure if exists p_rent_movie;
 drop procedure if exists p_return_movie;
@@ -188,7 +189,7 @@ create table Trailer
 (
     id       int primary key auto_increment not null,
     link     text,
-    movie_id int references Movie (id)
+movie_id int references Movie (id)
 );
 
 -- create views
@@ -238,7 +239,16 @@ from Rentals as r
          inner join Movie as m on md.movie_id = m.id
          inner join User u on r.user_id = u.id;
 
--- TODO create view actor played in movies
+-- create view actor played in movies
+
+create view actors_per_movie as
+    select Movie.title as Movie_Title,
+    P.name As Acror_Name,
+    PRP.character_name as Fictional_Name
+    from Movie join PersonRolePlayed as PRP on Movie.id = PRP.movie_id
+    join People as P on P.id = PRP.person_id;
+
+-- its the same as an inner join since we have no blank
 
 -- create functions
 
