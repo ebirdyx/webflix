@@ -24,6 +24,7 @@ drop view if exists v_movie_details;
 drop view if exists v_my_rentals;
 drop view if exists actors_per_movie;
 drop function if exists get_user_age_in_years;
+drop function if exists f_find_bw_movies;
 drop procedure if exists p_rent_movie;
 drop procedure if exists p_return_movie;
 drop procedure if exists p_insert_movie;
@@ -49,7 +50,7 @@ create table CreditCard
 (
     id                    int primary key auto_increment                 not null,
     no                    text,
-    type                  enum ('MasterCard', 'Visa', 'AmericanExpress') not null,
+        type                  enum ('MasterCard', 'Visa', 'AmericanExpress') not null,
     expiration_date_month int,
     expiration_date_year  int,
     cvv                   int
@@ -239,18 +240,24 @@ from Rentals as r
          inner join Movie as m on md.movie_id = m.id
          inner join User u on r.user_id = u.id;
 
--- create view actor played in movies
 
-create view v_actors_per_movie as
-    select Movie.title as Movie_Title,
-    P.name As Acror_Name,
-    PRP.character_name as Fictional_Name
-    from Movie join PersonRolePlayed as PRP on Movie.id = PRP.movie_id
-    join People as P on P.id = PRP.person_id;
 
--- its the same as an inner join since we have no blank
+
 
 -- create functions
+-- get black and white movies
+
+delimiter //
+create function f_find_bw_movies(
+    movie_id int
+) returns int
+begin
+    declare movie_title text;
+    select id into movie_id from Movie where publishing_year <= 1909;
+    select title into movie_title from Movie where id = movie_id ;
+    return movie_id and movie_title;
+end //
+delimiter ;
 
 # create function get_
 
@@ -392,3 +399,16 @@ begin
 end;
 //
 delimiter ;
+-- a) Joins (Inner, Left, Right, and Full Outer JOIN)
+select Movie.title, People.name, PersonRolePlayed.character_name,
+       G.name
+from People left join PersonRolePlayed on People.id = PersonRolePlayed.person_id
+left join Movie on PersonRolePlayed.movie_id = Movie.id
+left join MovieGenre MG on PersonRolePlayed.movie_id = MG.movie_id
+left join Genre G on MG.genre_id = G.id;
+
+SELECT * FROM User
+                  LEFT JOIN Address A on User.address_id = A.id
+UNION
+SELECT * FROM User
+                  RIGHT JOIN Address on User.address_id = Address.id
