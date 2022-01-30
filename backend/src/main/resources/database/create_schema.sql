@@ -240,7 +240,14 @@ from Rentals as r
          inner join Movie as m on md.movie_id = m.id
          inner join User u on r.user_id = u.id;
 
+-- create view actor played in movies
 
+create view actors_per_movie as
+select Movie.title as Movie_Title,
+       P.name As Acror_Name,
+       PRP.character_name as Fictional_Name
+from Movie join PersonRolePlayed as PRP on Movie.id = PRP.movie_id
+           join People as P on P.id = PRP.person_id;
 
 
 
@@ -252,11 +259,11 @@ create function f_find_bw_movies(
     movie_id int
 ) returns int
 begin
-    declare movie_title text;
-    select id into movie_id from Movie where publishing_year <= 1909;
-    select title into movie_title from Movie where id = movie_id ;
-    return movie_id and movie_title;
-end //
+    declare id_of_movie int;
+    select id into id_of_movie from Movie
+    where id = movie_id and Movie.publishing_year < 1909;
+    return id_of_movie;
+end ; //
 delimiter ;
 
 # create function get_
@@ -297,7 +304,7 @@ begin
 end //
 delimiter ;
 
--- TODO p_return_movie a user returning borrowed movie
+--  p_return_movie a user returning borrowed movie
 
 delimiter //
 create procedure p_return_movie(
@@ -380,7 +387,7 @@ end;
 //
 delimiter ;
 
--- TODO: create trigger check if the movie dvd is available before rental
+-- create trigger check if the movie dvd is available before rental
 
 delimiter //
 create trigger if not exists t_check_movie_dvd_availability
