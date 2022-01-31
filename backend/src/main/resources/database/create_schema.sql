@@ -233,7 +233,7 @@ select u.username as user,
        m.title    as title,
        r.borrowed_date
 from Rentals as r
-         inner join MovieDVD as md on r.id = md.id
+         inner join MovieDVD as md on r.movie_dvd_id = md.id
          inner join Movie as m on md.movie_id = m.id
          inner join User u on r.user_id = u.id;
 

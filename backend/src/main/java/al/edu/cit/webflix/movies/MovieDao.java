@@ -147,14 +147,11 @@ public class MovieDao implements IRepository<Movie> {
                 new SqlParameter(Types.INTEGER)
         );
 
-        jdbc.call(new CallableStatementCreator() {
-            @Override
-            public CallableStatement createCallableStatement(Connection con) throws SQLException {
-                CallableStatement cs = con.prepareCall("{call p_rent_movie(?, ?)}");
-                cs.setInt(1, userId);
-                cs.setInt(2, movieId);
-                return cs;
-            }
+        jdbc.call(con -> {
+            CallableStatement cs = con.prepareCall("{call p_rent_movie(?, ?)}");
+            cs.setInt(1, userId);
+            cs.setInt(2, movieId);
+            return cs;
         }, parameters);
     }
 }
