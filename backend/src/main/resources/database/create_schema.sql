@@ -23,11 +23,15 @@ drop view if exists v_users;
 drop view if exists v_movie_details;
 drop view if exists v_my_rentals;
 drop function if exists get_user_age_in_years;
+drop function if exists calculate_age;
+drop function if exists is_card_expired;
 drop procedure if exists p_rent_movie;
+drop procedure if exists p_return_movie;
 drop procedure if exists p_insert_movie;
 drop trigger if exists t_check_user_age;
 drop trigger if exists t_validate_credit_card;
 drop trigger if exists t_generate_movie_dvd;
+drop trigger if exists t_check_username_unique;
 
 
 set foreign_key_checks = 1;
@@ -50,7 +54,8 @@ create table CreditCard
     type                  enum ('MasterCard', 'Visa', 'AmericanExpress') not null,
     expiration_date_month int,
     expiration_date_year  int,
-    cvv                   int
+    cvv                   int,
+    status                enum ('valid', 'expired')
 );
 
 create table User
@@ -245,15 +250,35 @@ from Rentals as r
 
 -- calculate user age
 delimiter //
-create function get_user_age_in_years(
-    user_id int
+create function calculate_age(
+    birth_date date
 ) returns int
 begin
-    declare user_birth_date date;
     declare user_age int;
-    select birth_date into user_birth_date from User where id = user_id;
-    select TIMESTAMPDIFF(year, user_birth_date, curdate()) into user_age;
+    select TIMESTAMPDIFF(year, birth_date, curdate()) into user_age;
     return user_age;
+end //
+delimiter ;
+
+delimiter //
+create function is_card_expired(
+    exp_year int,
+    exp_month int
+) returns bool
+begin
+    if exp_year > year(curdate()) then
+        return false;
+    end if;
+
+    if exp_year < year(curdate()) then
+        return true;
+    end if;
+
+    if exp_month > month(curdate()) then
+        return true;
+    end if;
+
+    return false;
 end //
 delimiter ;
 
@@ -271,15 +296,30 @@ begin
     select id into id_dvd from MovieDVD where movie_id = id_movie limit 1;
 
     insert into Rentals (borrowed_date, return_date, user_id, movie_dvd_id)
-        values (curdate(), null, id_user, id_dvd);
+    values (curdate(), null, id_user, id_dvd);
 
     update MovieDVD set movie_dvd_status = 'rented' where id = id_dvd;
-
     commit;
 end //
 delimiter ;
 
--- TODO p_return_movie a user returning borrowed movie
+delimiter //
+create procedure p_return_movie(
+    in id_user int,
+    in id_dvd int
+)
+begin
+    start transaction;
+
+    update MovieDVD set movie_dvd_status = 'available' where id = id_dvd;
+
+    update Rentals
+    set return_date = curdate()
+    where user_id = id_user
+      and movie_dvd_id = id_dvd;
+    commit;
+end //
+delimiter ;
 
 -- triggers
 -- trigger for user insert age check > 18
@@ -289,12 +329,12 @@ create trigger if not exists t_check_user_age
     on User
     for each row
 begin
-    declare user_age int;
+    declare age int;
 
-    select get_user_age_in_years(NEW.id) into user_age;
+    select calculate_age(NEW.birth_date) into age;
 
-    if user_age < 18 then
-        SIGNAL SQLSTATE '70002'
+    if (age < 18) then
+        SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = 'User age must be greater than 18 years old';
     end if;
 end;
@@ -308,15 +348,10 @@ create trigger if not exists t_validate_credit_card
     on CreditCard
     for each row
 begin
-    declare exp_month int;
-    declare exp_year int;
-
-    select expiration_date_month into exp_month from CreditCard where id = NEW.id;
-    select expiration_date_year into exp_year from CreditCard where id = NEW.id;
-
-    if !(exp_month > month(curdate()) and exp_year > year(curdate())) then
-        SIGNAL SQLSTATE '70002'
-            SET MESSAGE_TEXT = 'This credit card is already expired and cannot be added';
+    if is_card_expired(NEW.expiration_date_year, NEW.expiration_date_month) then
+        set NEW.status = 'expired';
+    else
+        set NEW.status = 'valid';
     end if;
 end;
 //
@@ -360,9 +395,29 @@ begin
     select movie_dvd_status into movie_dvd_status from MovieDVD where MovieDVD.id = NEW.movie_dvd_id;
 
     if strcmp(movie_dvd_status, 'rented') then
-        SIGNAL SQLSTATE '70002'
+        SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = 'Movie dvd is not available';
     end if;
 end;
 //
+delimiter ;
+
+delimiter //
+create trigger if not exists t_check_username_unique
+    before insert
+    on User
+    for each row
+begin
+    declare existing_username varchar(100) default null;
+
+    select count(*)
+    into existing_username
+    from User
+    where NEW.username = User.username;
+
+    if (existing_username > 0) then
+        signal sqlstate '45000'
+            set message_text = 'This username already exists!';
+    end if;
+end //
 delimiter ;

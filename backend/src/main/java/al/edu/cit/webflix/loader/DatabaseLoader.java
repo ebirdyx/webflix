@@ -57,7 +57,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.sql.Date;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -252,6 +251,8 @@ class DatabaseLoader implements CommandLineRunner {
 
         CreditCard creditCard = new CreditCardBuilder()
                 .setType(CreditCardType.MasterCard)
+                .setExpirationYear(2030)
+                .setExpirationMonth(12)
                 .setId(1)
                 .build();
 
@@ -261,6 +262,7 @@ class DatabaseLoader implements CommandLineRunner {
                 .setType(UserType.Employee)
                 .setUsername("admin")
                 .setPassword("admin")
+                .setDateOfBirth(Date.valueOf("1999-01-01"))
                 .setAddress(address)
                 .setCreditCard(creditCard)
                 .build();

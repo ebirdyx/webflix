@@ -1,6 +1,5 @@
 package al.edu.cit.webflix.users;
 
-import al.edu.cit.webflix.configuration.PasswordEncoder;
 import al.edu.cit.webflix.users.addresses.Address;
 import al.edu.cit.webflix.users.creditcards.CreditCard;
 import al.edu.cit.webflix.users.customersubscriptions.CustomerSubscription;
