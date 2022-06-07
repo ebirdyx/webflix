@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = "http://localhost:8080/api/v1/auth"
+const url = "http://localhost:8686/api/v1/auth"
 
 const UserApi = () => {
   return {
